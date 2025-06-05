@@ -1,0 +1,68 @@
+﻿@page "/discounts/delete"
+@attribute [Authorize(Roles = "Administrator")]
+@using Microsoft.EntityFrameworkCore
+@using BookApp.Data
+@inject IDbContextFactory<BookApp.Data.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Delete</PageTitle>
+
+<h1>Delete</h1>
+
+<p>Are you sure you want to delete this?</p>
+<div>
+    <h2>Discount</h2>
+    <hr />
+    @if (discount is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">BookId</dt>
+            <dd class="col-sm-10">@discount.BookId</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">ProcentSkidki</dt>
+            <dd class="col-sm-10">@discount.ProcentSkidki</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">DataNachala</dt>
+            <dd class="col-sm-10">@discount.DataNachala</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">DataKonca</dt>
+            <dd class="col-sm-10">@discount.DataKonca</dd>
+        </dl>
+        <EditForm method="post" Model="discount" OnValidSubmit="DeleteDiscount" FormName="delete" Enhance>
+            <button type="submit" class="btn btn-danger" disabled="@(discount is null)">Delete</button> |
+            <a href="/discounts">Back to List</a>
+        </EditForm>
+    }
+</div>
+
+@code {
+    private Discount? discount;
+
+    [SupplyParameterFromQuery]
+    private int DiscountId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        discount = await context.Discounts.FirstOrDefaultAsync(m => m.DiscountId == DiscountId);
+
+        if (discount is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    private async Task DeleteDiscount()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Discounts.Remove(discount!);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/discounts");
+    }
+}

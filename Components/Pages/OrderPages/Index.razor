@@ -1,0 +1,161 @@
+﻿@page "/orders"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using BookApp.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+
+<PageTitle>Заказы</PageTitle>
+
+<div class="orders-page">
+    <div class="hero">
+        <h1>Список заказов</h1>
+        <p>Управление заказами покупателей</p>
+    </div>
+
+    <div class="orders-container">
+        <div class="actions-header">
+            <a href="orders/create" class="btn btn-primary">Создать новый заказ</a>
+        </div>
+
+        <QuickGrid Class="orders-grid" Items="orders">
+            <PropertyColumn Title="№" Property="@(order => order.OrderId)" />
+            <PropertyColumn Title="Сумма" Property="@(order => order.Summa.ToString("C"))" />
+            <PropertyColumn Title="Статус" Property="@(order => order.StatusZakaza)" />
+            <PropertyColumn Title="Почта" Property="@(order => order.UserEmail)" />
+            <TemplateColumn Title="Книги">
+                @context.Items!.Select(item => $"{item.Book?.Title} (×{item.KolVo})").Aggregate((a, b) => $"{a}<br/>{b}")
+            </TemplateColumn>
+            <TemplateColumn>
+                <div class="order-actions">
+                    <a href="@($"orders/details?orderid={context.OrderId}")" class="btn btn-outline">Подробности</a>
+                    <a href="@($"orders/edit?orderid={context.OrderId}")" class="btn btn-outline">Изменить</a>
+                    <a href="@($"orders/delete?orderid={context.OrderId}")" class="btn btn-outline">Удалить</a>
+                </div>
+            </TemplateColumn>
+        </QuickGrid>
+    </div>
+</div>
+
+<style>
+    /* Общие стили для страницы заказов */
+    .orders-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    /* Стили для контейнера заказов */
+    .orders-container {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        margin-bottom: 40px;
+    }
+
+    /* Стили для заголовка с кнопками */
+    .actions-header {
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    /* Стили для таблицы заказов */
+    .orders-grid {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .orders-grid th {
+            background-color: #f8f9fa;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #2d3748;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .orders-grid td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: middle;
+        }
+
+        .orders-grid tr:hover td {
+            background-color: #f8f9fa;
+        }
+
+    /* Стили для кнопок действий */
+    .order-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    /* Общие стили кнопок (как на главной странице) */
+    .btn {
+        display: inline-block;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        border: 1px solid transparent;
+        transition: all 0.2s;
+    }
+
+    .btn-primary {
+        background-color: #4299e1;
+        color: white;
+    }
+
+        .btn-primary:hover {
+            background-color: #3182ce;
+        }
+
+    .btn-outline {
+        background-color: white;
+        border-color: #e2e8f0;
+        color: #4a5568;
+    }
+
+        .btn-outline:hover {
+            background-color: #f8f9fa;
+            border-color: #cbd5e0;
+        }
+
+    /* Адаптивные стили */
+    @@media (max-width: 768px) {
+        .orders-container {
+            padding: 20px;
+        }
+
+        .order-actions {
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .orders-grid th,
+        .orders-grid td {
+            padding: 8px 10px;
+        }
+    }
+</style>
+
+@code {
+    private ApplicationDbContext context = default!;
+    private IQueryable<Order> orders = Enumerable.Empty<Order>().AsQueryable();
+
+    protected override async Task OnInitializedAsync()
+    {
+        context = DbFactory.CreateDbContext();
+        orders = context.Orders
+            .Include(o => o.Items!)
+            .ThenInclude(i => i.Book)
+            .AsQueryable();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

@@ -1,0 +1,70 @@
+﻿@page "/discounts/edit"
+@attribute [Authorize(Roles = "Administrator")]
+@using Microsoft.EntityFrameworkCore
+@using BookApp.Data
+@inject IDbContextFactory<BookApp.Data.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Редактирование скидки</PageTitle>
+
+<h1>Редактировать скидку</h1>
+
+@if (Discount is null)
+{
+    <p>Загрузка...</p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm Model="Discount" OnValidSubmit="UpdateDiscount">
+                <DataAnnotationsValidator />
+
+                <div class="mb-3">
+                    <label class="form-label">ID книги:</label>
+                    <InputNumber @bind-Value="Discount.BookId" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Процент скидки:</label>
+                    <InputNumber @bind-Value="Discount.ProcentSkidki" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Дата начала:</label>
+                    <InputDate @bind-Value="Discount.DataNachala" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Дата окончания:</label>
+                    <InputDate @bind-Value="Discount.DataKonca" class="form-control" />
+                </div>
+
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+                <a href="/discounts" class="btn btn-secondary">Отмена</a>
+            </EditForm>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int DiscountId { get; set; }
+
+    private Discount? Discount { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Discount = await context.Discounts.FindAsync(DiscountId);
+    }
+
+    private async Task UpdateDiscount()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Update(Discount!);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/discounts");
+    }
+}

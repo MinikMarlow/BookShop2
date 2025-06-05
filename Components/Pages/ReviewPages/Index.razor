@@ -1,0 +1,173 @@
+﻿@page "/reviews"
+@using BookApp.Data
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@implements IAsyncDisposable
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Отзывы</PageTitle>
+
+<div class="orders-page">
+    <div class="orders-container">
+        <h1>Отзывы</h1>
+
+        <div class="actions-header">
+            <a class="btn btn-primary" href="@($"reviews/create{(BookId.HasValue ? $"?bookid={BookId}" : "")}")">Создать отзыв</a>
+        </div>
+
+        <QuickGrid Items="FilteredReviews" class="orders-grid">
+            <PropertyColumn Property="r => r.Book.Title" Title="Книга" />
+            <PropertyColumn Property="r => r.Rating" Title="Оценка" />
+            <PropertyColumn Property="r => r.Text" Title="Текст отзыва" />
+
+            <TemplateColumn Context="review">
+                <div class="order-actions">
+                    <AuthorizeView Roles="Administrator">
+                        <a class="btn btn-outline" href="@($"reviews/edit?reviewid={review.ReviewId}")">Изменить</a>
+                    </AuthorizeView>
+                    <a class="btn btn-outline" href="@($"reviews/details?reviewid={review.ReviewId}")">Просмотр</a>
+                    <AuthorizeView Roles="Administrator">
+                        <a class="btn btn-outline" href="@($"reviews/delete?reviewid={review.ReviewId}")">Удалить</a>
+                    </AuthorizeView>
+                </div>
+            </TemplateColumn>
+        </QuickGrid>
+
+        <div style="margin-top: 20px;">
+            <a class="btn btn-outline" href="/">Назад к списку книг</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Общие стили для страницы отзывов */
+    .orders-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    /* Стили для контейнера отзывов */
+    .orders-container {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        margin-bottom: 40px;
+    }
+
+    /* Стили для заголовка с кнопками */
+    .actions-header {
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    /* Стили для таблицы отзывов */
+    .orders-grid {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .orders-grid th {
+            background-color: #f8f9fa;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #2d3748;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .orders-grid td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: middle;
+        }
+
+        .orders-grid tr:hover td {
+            background-color: #f8f9fa;
+        }
+
+    /* Стили для кнопок действий */
+    .order-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    /* Общие стили кнопок */
+    .btn {
+        display: inline-block;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        border: 1px solid transparent;
+        transition: all 0.2s;
+    }
+
+    .btn-primary {
+        background-color: #4299e1;
+        color: white;
+    }
+
+        .btn-primary:hover {
+            background-color: #3182ce;
+        }
+
+    .btn-outline {
+        background-color: white;
+        border-color: #e2e8f0;
+        color: #4a5568;
+    }
+
+        .btn-outline:hover {
+            background-color: #f8f9fa;
+            border-color: #cbd5e0;
+        }
+
+    /* Адаптивные стили */
+    @@media (max-width: 768px) {
+        .orders-container {
+            padding: 20px;
+        }
+
+        .order-actions {
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .orders-grid th,
+        .orders-grid td {
+            padding: 8px 10px;
+        }
+    }
+</style>
+
+@code {
+    private ApplicationDbContext context = default!;
+    private string searchTerm = string.Empty;
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int? BookId { get; set; }
+
+    private IQueryable<Review> allReviews = Enumerable.Empty<Review>().AsQueryable();
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+        allReviews = context.Reviews.Include(r => r.Book).AsQueryable();
+    }
+
+    private IQueryable<Review> FilteredReviews =>
+        string.IsNullOrWhiteSpace(searchTerm)
+            ? allReviews
+            : allReviews.Where(r =>
+                r.Book.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                r.Text.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

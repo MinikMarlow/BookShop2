@@ -1,0 +1,80 @@
+﻿@page "/reviews/create"
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.EntityFrameworkCore
+@using BookApp.Data
+@inject IDbContextFactory<BookApp.Data.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Создать отзыв</PageTitle>
+
+<h1>Создать отзыв</h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Review" OnValidSubmit="AddReview" FormName="createReview" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert" />
+
+            <div class="mb-3">
+                <label for="book" class="form-label">Книга:</label>
+                <InputSelect id="book" @bind-Value="Review.BookId" class="form-control">
+                    <option value="">-- Выберите книгу --</option>
+                    @foreach (var book in Books)
+                    {
+                        <option value="@book.BookId">@book.Title</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="() => Review.BookId" class="text-danger" />
+            </div>
+
+            <div class="mb-3">
+                <label for="rating" class="form-label">Оценка (1-5):</label>
+                <InputNumber id="rating" @bind-Value="Review.Rating" class="form-control" />
+                <ValidationMessage For="() => Review.Rating" class="text-danger" />
+            </div>
+
+            <div class="mb-3">
+                <label for="text" class="form-label">Текст отзыва:</label>
+                <InputTextArea id="text" @bind-Value="Review.Text" class="form-control" />
+                <ValidationMessage For="() => Review.Text" class="text-danger" />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Создать</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/reviews">Назад к списку</a>
+</div>
+
+@code {
+    private List<Book> Books { get; set; } = new();
+
+    [SupplyParameterFromForm]
+    private Review Review { get; set; } = new();
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public int? BookId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Books = await context.Books.ToListAsync();
+
+        if (BookId.HasValue)
+        {
+            Review.BookId = BookId.Value;
+        }
+    }
+
+    private async Task AddReview()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Reviews.Add(Review);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo($"/reviews{(BookId.HasValue ? $"?bookid={BookId}" : "")}");
+    }
+}

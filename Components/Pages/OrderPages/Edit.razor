@@ -1,0 +1,98 @@
+﻿@page "/orders/edit"
+@using Microsoft.EntityFrameworkCore
+@using BookApp.Data
+@inject IDbContextFactory<BookApp.Data.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Редактирование</PageTitle>
+
+<h1>Редактирование</h1>
+
+<h2>Заказ</h2>
+<hr />
+@if (Order is null)
+{
+    <p><em>Загрузка...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Order" OnValidSubmit="UpdateOrder" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert" />
+                <input type="hidden" name="Order.OrderId" value="@Order.OrderId" />
+                <div class="mb-3">
+                    <label for="summa" class="form-label">Сумма:</label>
+                    <InputNumber id="summa" @bind-Value="Order.Summa" class="form-control" />
+                    <ValidationMessage For="() => Order.Summa" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="statuszakaza" class="form-label">Статус заказа:</label>
+                    <select @bind="Order.StatusZakaza" class="form-control" id="statuszakaza">
+                        <option value="Новый">Новый</option>
+                        <option value="В обработке">В обработке</option>
+                        <option value="Отправлен">Отправлен</option>
+                        <option value="Доставлен">Доставлен</option>
+                        <option value="Отменен">Отменен</option>
+                    </select>
+                    <ValidationMessage For="() => Order.StatusZakaza" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/orders">Назад к списку</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int OrderId { get; set; }
+
+    [SupplyParameterFromForm]
+    private Order? Order { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Order ??= await context.Orders.FirstOrDefaultAsync(m => m.OrderId == OrderId);
+
+        if (Order is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    private async Task UpdateOrder()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(Order!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!OrderExists(Order!.OrderId))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/orders");
+    }
+
+    private bool OrderExists(int orderid)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Orders.Any(e => e.OrderId == orderid);
+    }
+}

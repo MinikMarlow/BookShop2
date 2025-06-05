@@ -1,0 +1,166 @@
+﻿@page "/books/edit"
+@attribute [Authorize(Roles = "Administrator")]
+@using Microsoft.EntityFrameworkCore
+@using BookApp.Data
+@using Microsoft.AspNetCore.Components.Forms
+@inject IDbContextFactory<BookApp.Data.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+@inject IWebHostEnvironment Environment
+
+<PageTitle>Изменить</PageTitle>
+
+<h1>Изменить</h1>
+
+<h2>Book</h2>
+<hr />
+@if (Book is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Book" OnValidSubmit="UpdateBook" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert" />
+                <input type="hidden" name="Book.BookId" value="@Book.BookId" />
+                <div class="mb-3">
+                    <label for="title" class="form-label">Название:</label>
+                    <InputText id="title" @bind-Value="Book.Title" class="form-control" />
+                    <ValidationMessage For="() => Book.Title" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="author" class="form-label">Автор:</label>
+                    <InputText id="author" @bind-Value="Book.Author" class="form-control" />
+                    <ValidationMessage For="() => Book.Author" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="zhanr" class="form-label">Жанр:</label>
+                    <InputText id="zhanr" @bind-Value="Book.Zhanr" class="form-control" />
+                    <ValidationMessage For="() => Book.Zhanr" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="opisanie" class="form-label">Описание:</label>
+                    <InputTextArea id="opisanie" @bind-Value="Book.Opisanie" class="form-control" />
+                    <ValidationMessage For="() => Book.Opisanie" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="price" class="form-label">Цена:</label>
+                    <InputNumber id="price" @bind-Value="Book.Price" class="form-control" />
+                    <ValidationMessage For="() => Book.Price" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="kolvonasklade" class="form-label">Количество на складе:</label>
+                    <InputNumber id="kolvonasklade" @bind-Value="Book.KolVoNaSklade" class="form-control" />
+                    <ValidationMessage For="() => Book.KolVoNaSklade" class="text-danger" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="image" class="form-label">Изображение книги:</label>
+                    <InputFile id="image" OnChange="HandleFileUpload" class="form-control" accept="image/*" />
+                    <ValidationMessage For="() => Book.ImageFileName" class="text-danger" />
+
+                    @if (!string.IsNullOrEmpty(Book.ImageFileName))
+                    {
+                        <div class="mt-2">
+                            <img src="/uploads/books/@Book.ImageFileName" class="img-thumbnail" style="max-height: 200px;" />
+                            <button type="button" class="btn btn-sm btn-danger mt-2" @onclick="DeleteImage">
+                                Удалить изображение
+                            </button>
+                        </div>
+                    }
+                </div>
+
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/books">Назад к списку книг</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int BookId { get; set; }
+
+    [SupplyParameterFromForm]
+    private Book? Book { get; set; }
+    private IBrowserFile? uploadedFile;
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Book ??= await context.Books.FirstOrDefaultAsync(m => m.BookId == BookId);
+
+        if (Book is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+    private void HandleFileUpload(InputFileChangeEventArgs e)
+    {
+        uploadedFile = e.File;
+        Book!.ImageFileName = e.File.Name;
+    }
+    private void  DeleteImage()
+    {
+        var filePath = Path.Combine(Environment.WebRootPath, "uploads", "books", Book!.ImageFileName!);
+        if (File.Exists(filePath))
+        {
+            File.Delete(filePath);
+        }
+        Book.ImageFileName = null;
+    }
+    private async Task UpdateBook()
+    {
+        if (uploadedFile != null)
+        {
+            // Удаляем старое изображение, если оно есть
+            if (!string.IsNullOrEmpty(Book!.ImageFileName))
+            {
+                var oldFilePath = Path.Combine(Environment.WebRootPath, "uploads", "books", Book.ImageFileName);
+                if (File.Exists(oldFilePath))
+                {
+                    File.Delete(oldFilePath);
+                }
+            }
+            // Сохраняем новое изображение
+            var uploadsFolder = Path.Combine(Environment.WebRootPath, "uploads", "books");
+            var uniqueFileName = Guid.NewGuid().ToString() + "_" + uploadedFile.Name;
+            var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await uploadedFile.OpenReadStream().CopyToAsync(stream);
+            }
+            Book.ImageFileName = uniqueFileName;
+        }
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(Book!).State = EntityState.Modified;
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!BookExists(Book!.BookId))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/books");
+    }
+
+    private bool BookExists(int bookid)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.Books.Any(e => e.BookId == bookid);
+    }
+}

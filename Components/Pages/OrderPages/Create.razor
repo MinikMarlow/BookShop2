@@ -1,0 +1,221 @@
+﻿@page "/orders/create"
+@using Microsoft.EntityFrameworkCore
+@using BookApp.Data
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Создание заказа</PageTitle>
+
+<h1>Создание заказа</h1>
+<hr />
+<div class="row">
+    <div class="col-md-4 order-form">
+        <EditForm method="post" Model="Order" OnValidSubmit="CreateOrder" FormName="createOrder" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="validation-summary text-danger" role="alert" />
+
+            <div class="mb-3">
+                <label for="userEmail" class="form-label">Email пользователя:</label>
+                <InputText id="userEmail" @bind-Value="Order.UserEmail" class="form-control" />
+                <ValidationMessage For="() => Order.UserEmail" class="text-danger" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Способ оплаты:</label>
+                <div>
+                    @foreach (var method in paymentMethods)
+                    {
+                        <div class="form-check">
+                            <input class="form-check-input"
+                                   type="radio"
+                                   name="payment"
+                                   id="@method"
+                                   value="@method"
+                                   checked="@(Order.PaymentMethod == method)"
+                                   @onchange="@(() => Order.PaymentMethod = method)" />
+                            <label class="form-check-label" for="@method">@method</label>
+                        </div>
+                    }
+                </div>
+                <ValidationMessage For="() => Order.PaymentMethod" class="text-danger" />
+            </div>
+
+            <div class="mb-3">
+                <label for="address" class="form-label">Адрес доставки:</label>
+                <InputText id="address" @bind-Value="Order.Address" class="form-control" />
+                <ValidationMessage For="() => Order.Address" class="text-danger" />
+            </div>
+
+            <div class="mb-3">
+                <label for="bookSelect" class="form-label">Книга:</label>
+                <select id="bookSelect" @bind="selectedBookId" class="form-select">
+                    @foreach (var book in books)
+                    {
+                        <option value="@book.BookId">@book.Title (@book.Price.ToString("C"))</option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Создать заказ</button>
+                <a href="/orders" class="btn-link">Назад к списку</a>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+<style>
+    /* Общие стили для страницы заказов */
+    .order-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    /* Стили для формы */
+    .order-form {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        margin-bottom: 40px;
+    }
+
+    /* Стили для заголовков */
+    .order-title {
+        color: #2d3748;
+        margin-bottom: 25px;
+        font-weight: 600;
+    }
+
+    /* Стили для полей формы */
+    .form-control, .form-select {
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        padding: 10px 12px;
+        width: 100%;
+        transition: border-color 0.2s;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #4299e1;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+        }
+
+    /* Стили для радиокнопок */
+    .form-check {
+        margin-bottom: 8px;
+    }
+
+    .form-check-input {
+        margin-right: 8px;
+    }
+
+    /* Стили для кнопок */
+    .btn {
+        display: inline-block;
+        padding: 10px 16px;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        border: 1px solid transparent;
+        transition: all 0.2s;
+    }
+
+    .btn-primary {
+        background-color: #4299e1;
+        color: white;
+        margin-right: 10px;
+    }
+
+        .btn-primary:hover {
+            background-color: #3182ce;
+        }
+
+    .btn-link {
+        color: #4299e1;
+        text-decoration: underline;
+        background: none;
+        border: none;
+        padding: 0;
+    }
+
+        .btn-link:hover {
+            color: #3182ce;
+        }
+
+    /* Стили для сообщений валидации */
+    .text-danger {
+        color: #e53e3e;
+        font-size: 0.85rem;
+        margin-top: 5px;
+        display: block;
+    }
+
+    .validation-summary {
+        background-color: #fff5f5;
+        border: 1px solid #fed7d7;
+        border-radius: 6px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    /* Стили для блока с кнопками */
+    .form-actions {
+        margin-top: 20px;
+    }
+
+    /* Адаптивные стили */
+    @@media (max-width: 768px) {
+        .order-form {
+            padding: 20px;
+        }
+
+        .btn {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+    }
+</style>
+
+@code {
+    private List<string> paymentMethods = new() { "Наличные", "Карта", "Онлайн" };
+    private List<Book> books = new();
+    private int selectedBookId;
+
+    [SupplyParameterFromForm]
+    private Order Order { get; set; } = new() { PaymentMethod = "Наличные" };
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        books = await context.Books.ToListAsync();
+        selectedBookId = books.FirstOrDefault()?.BookId ?? 0;
+    }
+
+    private async Task CreateOrder()
+    {
+        using var context = DbFactory.CreateDbContext();
+
+        var order = new Order
+            {
+                UserEmail = Order.UserEmail,
+                PaymentMethod = Order.PaymentMethod,
+                Address = Order.Address,
+                Summa = books.First(b => b.BookId == selectedBookId).Price,
+                StatusZakaza = "Новый",
+                Items = new List<OrderItem>
+            {
+                new() { BookId = selectedBookId, KolVo = 1 }
+            }
+            };
+
+        context.Orders.Add(order);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/orders");
+    }
+}

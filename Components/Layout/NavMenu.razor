@@ -1,0 +1,225 @@
+﻿@implements IDisposable
+@inject NavigationManager NavigationManager
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">
+            Best Books
+        </a>
+    </div>
+</div>
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="nav flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Главная
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="books">
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Список книг
+            </NavLink>
+        </div>
+
+        <AuthorizeView Roles="Administrator">
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="discounts">
+                    <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Управление скидками
+                </NavLink>
+            </div>
+        </AuthorizeView>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="orders">
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Заказы
+            </NavLink>
+        </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="reviews">
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Отзывы
+            </NavLink>
+        </div>
+
+        <AuthorizeView Roles="Administrator">
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="importexcel">
+                    <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Импорт из Excel
+                </NavLink>
+            </div>
+        </AuthorizeView>
+
+        <AuthorizeView Roles="Administrator">
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="exportexcel">
+                    <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Экспорт из Excel
+                </NavLink>
+            </div>
+        </AuthorizeView>
+
+        <AuthorizeView>
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="Account/Manage">
+                        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> @context.User.Identity?.Name
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <form action="Account/Logout" method="post">
+                        <AntiforgeryToken />
+                        <input type="hidden" name="ReturnUrl" value="@currentUrl" />
+                        <button type="submit" class="nav-link">
+                            <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
+                        </button>
+                    </form>
+                </div>
+            </Authorized>
+            <NotAuthorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="Account/Register">
+                        <span class="bi bi-person-nav-menu" aria-hidden="true"></span> Регистрация
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="Account/Login">
+                        <span class="bi bi-person-badge-nav-menu" aria-hidden="true"></span> Логин
+                    </NavLink>
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
+    </nav>
+</div>
+
+<style>
+    /* Общие стили для навигации */
+    .navbar {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        background-color: #e6edf7 !important; /* Светлый голубоватый фон */
+    }
+
+    .navbar-brand {
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: #5a6a85 !important; /* Светлый серо-голубой */
+        display: flex;
+        align-items: center;
+    }
+
+        .navbar-brand img {
+            height: 30px;
+            opacity: 0.9; /* Делаем лого немного прозрачнее */
+        }
+
+    .nav-scrollable {
+        background-color: #e6edf7 !important; /* Светлый фон */
+        padding-top: 1rem;
+    }
+
+    .nav-link {
+        color: #6b7b95 !important; /* Серо-голубой текст */
+        font-size: 0.95rem;
+        padding: 0.5rem 1rem;
+        margin: 0.15rem 0;
+        display: flex;
+        align-items: center;
+        transition: color 0.15s ease;
+        background: none !important; /* Убираем фон */
+    }
+
+        .nav-link:hover {
+            color: #3a4a6a !important; /* Темнеет при наведении */
+        }
+
+        .nav-link.active {
+            color: #2c5282 !important; /* Темно-синий при выборе */
+            font-weight: 600;
+            position: relative;
+        }
+
+            .nav-link.active:after {
+                content: "";
+                position: absolute;
+                left: 1rem;
+                right: 1rem;
+                bottom: 0;
+                height: 2px;
+                background-color: #2c5282; /* Подчеркивание для активного элемента */
+            }
+
+            .nav-link.active .bi {
+                color: #2c5282 !important; /* Темно-синие иконки */
+            }
+
+    /* Стили для иконок */
+    .bi {
+        margin-right: 0.75rem;
+        font-size: 1.1rem;
+        width: 1.25rem;
+        text-align: center;
+        color: #6b7b95 !important; /* Серо-голубые иконки */
+    }
+
+    /* Стили для кнопки выхода */
+    .nav-link button {
+        background: none;
+        border: none;
+        padding: 0;
+        font: inherit;
+        color: inherit;
+        text-align: left;
+        width: 100%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+    }
+
+    /* Адаптивные отступы */
+    .nav-item {
+        padding: 0 0.5rem;
+    }
+
+    /* Цвета для разных разделов */
+    .bi-house-door-fill-nav-menu {
+        color: #5d9c7e !important; /* Приглушенный зеленый */
+    }
+
+    .bi-plus-square-fill-nav-menu {
+        color: #5a8fce !important; /* Приглушенный синий */
+    }
+
+    .bi-person-fill-nav-menu,
+    .bi-person-nav-menu,
+    .bi-person-badge-nav-menu {
+        color: #d17ba0 !important; /* Приглушенный розовый */
+    }
+
+    .bi-arrow-bar-left-nav-menu {
+        color: #e57373 !important; /* Приглушенный красный */
+    }
+</style>
+
+@code {
+    private string? currentUrl;
+
+    protected override void OnInitialized()
+    {
+        currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+        NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+    }
+}

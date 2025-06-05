@@ -1,0 +1,78 @@
+﻿@page "/cart"
+@using BookApp.Data
+@using BookApp.Services
+@using Microsoft.EntityFrameworkCore
+@inject CartService CartService
+@inject NavigationManager Navigation
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+
+<h3>Ваша корзина</h3>
+
+@if (CartService.GetCartItems().Count == 0)
+{
+    <p>Корзина пуста</p>
+    <button @onclick="ContinueShopping">Продолжить покупки</button>
+}
+else
+{
+    <div class="cart-items">
+        @foreach (var item in CartService.GetCartItems())
+        {
+            <div class="cart-item">
+                <h4>@item.Book?.Title</h4>
+                <p>Цена: @item.Book?.Price.ToString("C")</p>
+                <p>Количество: @item.Kolichestvo</p>
+                <button @onclick="(() => RemoveItem(item.BookId))">Удалить</button>
+            </div>
+        }
+
+        <div class="total">
+            <h4>Итого: @CartService.GetTotalCost().ToString("C")</h4>
+        </div>
+
+        <button @onclick="ContinueShopping">Продолжить покупки</button>
+        <button @onclick="Checkout">Оформить заказ</button>
+    </div>
+}
+
+@code {
+    protected override void OnInitialized()
+    {
+        CartService.OnChange += StateHasChanged;
+    }
+
+    private void RemoveItem(int bookId)
+    {
+        CartService.RemoveFromCart(bookId);
+    }
+
+    private void ContinueShopping() => Navigation.NavigateTo("/");
+
+    private async Task Checkout()
+    {
+        using var context = DbFactory.CreateDbContext();
+
+        var order = new Order
+            {
+                Summa = CartService.GetTotalCost(),
+                StatusZakaza = "Новый",
+                Items = CartService.GetCartItems().Select(x => new OrderItem
+                {
+                    BookId = x.BookId,
+                    KolVo = x.Kolichestvo,
+                    CenaZaEdinicy = x.Book!.Price
+                }).ToList()
+            };
+
+        context.Orders.Add(order);
+        await context.SaveChangesAsync();
+
+        CartService.ClearCart();
+        Navigation.NavigateTo("/orders");
+    }
+
+    public void Dispose()
+    {
+        CartService.OnChange -= StateHasChanged;
+    }
+}

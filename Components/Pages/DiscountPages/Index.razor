@@ -1,0 +1,161 @@
+﻿@page "/discounts"
+@attribute [Authorize(Roles = "Administrator")]
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using BookApp.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<BookApp.Data.ApplicationDbContext> DbFactory
+
+<PageTitle>Скидки</PageTitle>
+
+<div class="orders-page">
+    <div class="orders-container">
+        <h1>Управление скидками</h1>
+
+        <div class="actions-header">
+            <a href="discounts/create" class="btn btn-primary">Добавить скидку</a>
+        </div>
+
+        <QuickGrid Items="context.Discounts.Include(d => d.Book)" class="orders-grid">
+            <PropertyColumn Title="Книга" Property="d => d.Book!.Title" />
+            <PropertyColumn Title="Скидка" Property="d => d.SkidkaInfo" />
+
+            <TemplateColumn Title="Действия">
+                <div class="order-actions">
+                    <a href="@($"discounts/edit?discountid={context.DiscountId}")"
+                       class="btn btn-outline">Изменить</a>
+                    <a href="@($"discounts/delete?discountid={context.DiscountId}")"
+                       class="btn btn-outline" style="color: #e53e3e; border-color: #e53e3e;">Удалить</a>
+                </div>
+            </TemplateColumn>
+        </QuickGrid>
+    </div>
+</div>
+
+<style>
+    /* Общие стили для страницы скидок */
+    .orders-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    /* Стили для контейнера скидок */
+    .orders-container {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        margin-bottom: 40px;
+    }
+
+    /* Стили для заголовка с кнопками */
+    .actions-header {
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    /* Стили для таблицы скидок */
+    .orders-grid {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .orders-grid th {
+            background-color: #f8f9fa;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #2d3748;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .orders-grid td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: middle;
+        }
+
+        .orders-grid tr:hover td {
+            background-color: #f8f9fa;
+        }
+
+    /* Стили для кнопок действий */
+    .order-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    /* Общие стили кнопок */
+    .btn {
+        display: inline-block;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        border: 1px solid transparent;
+        transition: all 0.2s;
+    }
+
+    .btn-primary {
+        background-color: #4299e1;
+        color: white;
+    }
+
+        .btn-primary:hover {
+            background-color: #3182ce;
+        }
+
+    .btn-outline {
+        background-color: white;
+        border-color: #e2e8f0;
+        color: #4a5568;
+    }
+
+        .btn-outline:hover {
+            background-color: #f8f9fa;
+            border-color: #cbd5e0;
+        }
+
+        /* Специальный стиль для кнопки удаления */
+        .btn-outline.delete-btn {
+            color: #e53e3e;
+            border-color: #e53e3e;
+        }
+
+            .btn-outline.delete-btn:hover {
+                background-color: #fff5f5;
+            }
+
+    /* Адаптивные стили */
+    @@media (max-width: 768px) {
+        .orders-container {
+            padding: 20px;
+        }
+
+        .order-actions {
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .orders-grid th,
+        .orders-grid td {
+            padding: 8px 10px;
+        }
+    }
+</style>
+
+@code {
+    private ApplicationDbContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

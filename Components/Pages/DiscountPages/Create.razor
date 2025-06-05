@@ -1,0 +1,81 @@
+﻿@page "/discounts/create"
+@attribute [Authorize(Roles = "Administrator")]
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.EntityFrameworkCore
+@using BookApp.Data
+@inject IDbContextFactory<BookApp.Data.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Создать скидку</PageTitle>
+
+<h1>Создать скидку</h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Discount" OnValidSubmit="AddDiscount" FormName="createDiscount" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert" />
+
+            <div class="mb-3">
+                <label for="book" class="form-label">Книга:</label>
+                <InputSelect id="book" @bind-Value="Discount.BookId" class="form-control">
+                    <option value="">-- Выберите книгу --</option>
+                    @foreach (var book in Books)
+                    {
+                        <option value="@book.BookId">@book.Title</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="() => Discount.BookId" class="text-danger" />
+            </div>
+
+            <div class="mb-3">
+                <label for="percent" class="form-label">Процент скидки:</label>
+                <InputNumber id="percent" @bind-Value="Discount.ProcentSkidki" class="form-control" />
+                <ValidationMessage For="() => Discount.ProcentSkidki" class="text-danger" />
+            </div>
+
+            <div class="mb-3">
+                <label for="startDate" class="form-label">Дата начала:</label>
+                <InputDate id="startDate" @bind-Value="Discount.DataNachala" class="form-control" />
+                <ValidationMessage For="() => Discount.DataNachala" class="text-danger" />
+            </div>
+
+            <div class="mb-3">
+                <label for="endDate" class="form-label">Дата окончания:</label>
+                <InputDate id="endDate" @bind-Value="Discount.DataKonca" class="form-control" />
+                <ValidationMessage For="() => Discount.DataKonca" class="text-danger" />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Создать скидку</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/discounts">Назад к списку</a>
+</div>
+
+@code {
+    private List<Book> Books { get; set; } = new();
+
+    [SupplyParameterFromForm]
+    private Discount Discount { get; set; } = new()
+        {
+            DataNachala = DateTime.Today,
+            DataKonca = DateTime.Today.AddDays(7)
+        };
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        Books = await context.Books.ToListAsync();
+    }
+
+    private async Task AddDiscount()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Discounts.Add(Discount);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/discounts");
+    }
+}

@@ -1,0 +1,75 @@
+﻿@page "/exportexcel"
+@using ClosedXML.Excel
+@using Microsoft.EntityFrameworkCore
+@using BookApp.Data
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject IJSRuntime js
+@implements IAsyncDisposable
+
+<button type="button" class="btn btn-success mb-2" @onclick="ExportXLS">Экспорт всех таблиц в Excel</button>
+
+@code {
+    ApplicationDbContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+
+    public async Task ExportXLS()
+    {
+        var XLSStream = ExportXLSData();
+        await js.InvokeVoidAsync("BlazorDownloadFile", "Books.xlsx", XLSStream);
+    }
+
+    private byte[] ExportXLSData()
+    {
+        using var workbook = new XLWorkbook();
+
+        var worksheet1 = workbook.Worksheets.Add("Books");
+        worksheet1.Cell(1, 1).Value = "BookId";
+        worksheet1.Cell(1, 2).Value = "Title";
+        worksheet1.Cell(1, 3).Value = "Author";
+        worksheet1.Cell(1, 4).Value = "Zhanr";
+        worksheet1.Cell(1, 5).Value = "Opisanie";
+        worksheet1.Cell(1, 6).Value = "Price";
+        worksheet1.Cell(1, 7).Value = "KolVoNaSklade";
+        worksheet1.Row(1).Style.Font.Bold = true;
+
+        int i = 2;
+        foreach (var book in context.Books)
+        {
+            worksheet1.Cell(i, 1).Value = book.BookId;
+            worksheet1.Cell(i, 2).Value = book.Title;
+            worksheet1.Cell(i, 3).Value = book.Author;
+            worksheet1.Cell(i, 4).Value = book.Zhanr;
+            worksheet1.Cell(i, 5).Value = book.Opisanie;
+            worksheet1.Cell(i, 6).Value = book.Price;
+            worksheet1.Cell(i, 7).Value = book.KolVoNaSklade;
+            i++;
+        }
+
+        var worksheet2 = workbook.Worksheets.Add("Reviews");
+        worksheet2.Cell(1, 1).Value = "ReviewId";
+        worksheet2.Cell(1, 2).Value = "BookId";
+        worksheet2.Cell(1, 3).Value = "Rating";
+        worksheet2.Cell(1, 4).Value = "Text";
+        worksheet2.Row(1).Style.Font.Bold = true;
+
+        i = 2;
+        foreach (var review in context.Reviews.Include(r => r.Book))
+        {
+            worksheet2.Cell(i, 1).Value = review.ReviewId;
+            worksheet2.Cell(i, 2).Value = review.BookId;
+            worksheet2.Cell(i, 3).Value = review.Rating;
+            worksheet2.Cell(i, 4).Value = review.Text;
+            i++;
+        }
+
+        MemoryStream XLSStream = new();
+        workbook.SaveAs(XLSStream);
+        return XLSStream.ToArray();
+    }
+}
