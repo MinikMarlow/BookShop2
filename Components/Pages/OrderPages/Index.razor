@@ -3,34 +3,40 @@
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using BookApp.Data
 @implements IAsyncDisposable
-@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject IDbContextFactory<BookApp.Data.ApplicationDbContext> DbFactory
 
 <PageTitle>Заказы</PageTitle>
 
 <div class="orders-page">
-    <div class="hero">
-        <h1>Список заказов</h1>
-        <p>Управление заказами покупателей</p>
-    </div>
-
     <div class="orders-container">
+        <h1>Заказы</h1>
+
         <div class="actions-header">
-            <a href="orders/create" class="btn btn-primary">Создать новый заказ</a>
+            <AuthorizeView Roles="Administrator">
+                <a href="orders/create" class="btn btn-primary">Создать заказ</a>
+            </AuthorizeView>
         </div>
 
-        <QuickGrid Class="orders-grid" Items="orders">
+        <QuickGrid Class="orders-grid" Items="@allOrders">
             <PropertyColumn Title="№" Property="@(order => order.OrderId)" />
-            <PropertyColumn Title="Сумма" Property="@(order => order.Summa.ToString("C"))" />
-            <PropertyColumn Title="Статус" Property="@(order => order.StatusZakaza)" />
-            <PropertyColumn Title="Почта" Property="@(order => order.UserEmail)" />
-            <TemplateColumn Title="Книги">
-                @context.Items!.Select(item => $"{item.Book?.Title} (×{item.KolVo})").Aggregate((a, b) => $"{a}<br/>{b}")
+            <PropertyColumn Title="Сумма" Property="@(order => order.Summa.ToString("C"))" Sortable="true" />
+            <PropertyColumn Title="Статус" Property="@(order => order.StatusZakaza)" Sortable="true" />
+            <PropertyColumn Title="Почта" Property="@(order => order.UserEmail)" Sortable="true" />
+
+            <TemplateColumn Title="Книги" Context="order">
+                @{
+                    var itemsList = order.Items?.Select(item => $"{item.Book?.Title} (×{item.KolVo})") ?? Enumerable.Empty<string>();
+                    <div>@string.Join(", ", itemsList)</div>
+                }
             </TemplateColumn>
-            <TemplateColumn>
+
+            <TemplateColumn Context="order">
                 <div class="order-actions">
-                    <a href="@($"orders/details?orderid={context.OrderId}")" class="btn btn-outline">Подробности</a>
-                    <a href="@($"orders/edit?orderid={context.OrderId}")" class="btn btn-outline">Изменить</a>
-                    <a href="@($"orders/delete?orderid={context.OrderId}")" class="btn btn-outline">Удалить</a>
+                    <a href="@($"orders/details?orderid={order.OrderId}")" class="btn btn-outline">Просмотр</a>
+                    <AuthorizeView Roles="Administrator">
+                        <a href="@($"orders/edit?orderid={order.OrderId}")" class="btn btn-outline">Изменить</a>
+                        <a href="@($"orders/delete?orderid={order.OrderId}")" class="btn btn-outline delete-btn">Удалить</a>
+                    </AuthorizeView>
                 </div>
             </TemplateColumn>
         </QuickGrid>
@@ -38,14 +44,13 @@
 </div>
 
 <style>
-    /* Общие стили для страницы заказов */
+    /* Ваши стили остаются без изменений */
     .orders-page {
         max-width: 1200px;
         margin: 0 auto;
         padding: 0 20px;
     }
 
-    /* Стили для контейнера заказов */
     .orders-container {
         background: white;
         padding: 30px;
@@ -54,14 +59,12 @@
         margin-bottom: 40px;
     }
 
-    /* Стили для заголовка с кнопками */
     .actions-header {
         margin-bottom: 30px;
         display: flex;
         justify-content: flex-end;
     }
 
-    /* Стили для таблицы заказов */
     .orders-grid {
         width: 100%;
         border-collapse: collapse;
@@ -86,13 +89,11 @@
             background-color: #f8f9fa;
         }
 
-    /* Стили для кнопок действий */
     .order-actions {
         display: flex;
         gap: 8px;
     }
 
-    /* Общие стили кнопок (как на главной странице) */
     .btn {
         display: inline-block;
         padding: 8px 12px;
@@ -126,7 +127,6 @@
             border-color: #cbd5e0;
         }
 
-    /* Адаптивные стили */
     @@media (max-width: 768px) {
         .orders-container {
             padding: 20px;
@@ -145,17 +145,23 @@
 </style>
 
 @code {
-    private ApplicationDbContext context = default!;
-    private IQueryable<Order> orders = Enumerable.Empty<Order>().AsQueryable();
+    private ApplicationDbContext? dbContext;
+    private IQueryable<Order>? allOrders;
 
     protected override async Task OnInitializedAsync()
     {
-        context = DbFactory.CreateDbContext();
-        orders = context.Orders
-            .Include(o => o.Items!)
+        dbContext = await DbFactory.CreateDbContextAsync();
+        allOrders = dbContext.Orders
+            .Include(o => o.Items)
             .ThenInclude(i => i.Book)
             .AsQueryable();
     }
 
-    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+    public async ValueTask DisposeAsync()
+    {
+        if (dbContext is not null)
+        {
+            await dbContext.DisposeAsync();
+        }
+    }
 }

@@ -17,14 +17,17 @@
     else
     {
         <dl class="row">
+            <dt class="col-sm-2">ID отзыва</dt>
+            <dd class="col-sm-10">@review.ReviewId</dd>
+
             <dt class="col-sm-2">Книга</dt>
-            <dd class="col-sm-10">@bookTitle</dd>
+            <dd class="col-sm-10">@bookTitle (ID: @review.BookId)</dd>
 
             <dt class="col-sm-2">Оценка</dt>
-            <dd class="col-sm-10">@review.Rating</dd>
+            <dd class="col-sm-10">@review.Rating из 5</dd>
 
             <dt class="col-sm-2">Текст отзыва</dt>
-            <dd class="col-sm-10">@review.Text</dd>
+            <dd class="col-sm-10" style="white-space: pre-line">@review.Text</dd>
         </dl>
         <div>
             <a href="@($"/reviews/edit?reviewid={review.ReviewId}")">Изменить</a> |

@@ -1,9 +1,11 @@
 ﻿@page "/importexcel"
-@using ClosedXML.Excel
-@using Microsoft.AspNetCore.Identity
 @using Microsoft.EntityFrameworkCore
 @using BookApp.Data
-@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@using ClosedXML.Excel
+@inject IDbContextFactory<BookApp.Data.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+@inject IJSRuntime js
+@rendermode InteractiveServer
 
 <PageTitle>Загрузка файла Excel для импорта в базу данных</PageTitle>
 

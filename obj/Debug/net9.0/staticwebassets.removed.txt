@@ -1,11 +1,1 @@
-C:\Users\minik\source\repos\BookApp\BookApp\wwwroot\images\1.jpg
-C:\Users\minik\source\repos\BookApp\BookApp\wwwroot\images\12.PNG
-C:\Users\minik\source\repos\BookApp\BookApp\wwwroot\images\13.PNG
-C:\Users\minik\source\repos\BookApp\BookApp\wwwroot\images\14.PNG
-C:\Users\minik\source\repos\BookApp\BookApp\wwwroot\images\16.PNG
-C:\Users\minik\source\repos\BookApp\BookApp\wwwroot\images\17.PNG
-C:\Users\minik\source\repos\BookApp\BookApp\wwwroot\images\2.png
-C:\Users\minik\source\repos\BookApp\BookApp\wwwroot\images\3.png
-C:\Users\minik\source\repos\BookApp\BookApp\wwwroot\images\4.jpg
-C:\Users\minik\source\repos\BookApp\BookApp\wwwroot\images\5.PNG
-C:\Users\minik\source\repos\BookApp\BookApp\wwwroot\images\6.png
+C:\Users\minik\source\repos\BookApp\BookApp\wwwroot\lib\bootstrap\dist\js\openfile.js

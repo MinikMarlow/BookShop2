@@ -267,6 +267,7 @@ C:\Users\minik\source\repos\BookApp\BookApp\obj\Debug\net9.0\BookApp.AssemblyInf
 C:\Users\minik\source\repos\BookApp\BookApp\obj\Debug\net9.0\BookApp.AssemblyInfo.cs
 C:\Users\minik\source\repos\BookApp\BookApp\obj\Debug\net9.0\BookApp.csproj.CoreCompileInputs.cache
 C:\Users\minik\source\repos\BookApp\BookApp\obj\Debug\net9.0\BookApp.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\minik\source\repos\BookApp\BookApp\obj\Debug\net9.0\BookApp.sourcelink.json
 C:\Users\minik\source\repos\BookApp\BookApp\obj\Debug\net9.0\scopedcss\Components\Layout\MainLayout.razor.rz.scp.css
 C:\Users\minik\source\repos\BookApp\BookApp\obj\Debug\net9.0\scopedcss\Components\Layout\NavMenu.razor.rz.scp.css
 C:\Users\minik\source\repos\BookApp\BookApp\obj\Debug\net9.0\scopedcss\bundle\BookApp.styles.css
@@ -337,4 +338,4 @@ C:\Users\minik\source\repos\BookApp\BookApp\obj\Debug\net9.0\refint\BookApp.dll
 C:\Users\minik\source\repos\BookApp\BookApp\obj\Debug\net9.0\BookApp.pdb
 C:\Users\minik\source\repos\BookApp\BookApp\obj\Debug\net9.0\BookApp.genruntimeconfig.cache
 C:\Users\minik\source\repos\BookApp\BookApp\obj\Debug\net9.0\ref\BookApp.dll
-C:\Users\minik\source\repos\BookApp\BookApp\obj\Debug\net9.0\compressed\bskl6wa6zw-rjwb8pue63.gz
+C:\Users\minik\source\repos\BookApp\BookApp\obj\Debug\net9.0\compressed\bskl6wa6zw-jm68lex57d.gz

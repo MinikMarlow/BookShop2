@@ -11,7 +11,7 @@
 
 <h1>Изменить</h1>
 
-<h2>Book</h2>
+<h2>Книги</h2>
 <hr />
 @if (Book is null)
 {
@@ -118,7 +118,6 @@ else
     {
         if (uploadedFile != null)
         {
-            // Удаляем старое изображение, если оно есть
             if (!string.IsNullOrEmpty(Book!.ImageFileName))
             {
                 var oldFilePath = Path.Combine(Environment.WebRootPath, "uploads", "books", Book.ImageFileName);
@@ -127,7 +126,6 @@ else
                     File.Delete(oldFilePath);
                 }
             }
-            // Сохраняем новое изображение
             var uploadsFolder = Path.Combine(Environment.WebRootPath, "uploads", "books");
             var uniqueFileName = Guid.NewGuid().ToString() + "_" + uploadedFile.Name;
             var filePath = Path.Combine(uploadsFolder, uniqueFileName);
@@ -154,10 +152,8 @@ else
                 throw;
             }
         }
-
         NavigationManager.NavigateTo("/books");
     }
-
     private bool BookExists(int bookid)
     {
         using var context = DbFactory.CreateDbContext();

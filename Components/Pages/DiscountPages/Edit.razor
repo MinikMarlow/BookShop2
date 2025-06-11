@@ -17,7 +17,7 @@ else
 {
     <div class="row">
         <div class="col-md-4">
-            <EditForm Model="Discount" OnValidSubmit="UpdateDiscount">
+            <EditForm Model="Discount" OnValidSubmit="UpdateDiscount" FormName="editDiscountForm">
                 <DataAnnotationsValidator />
 
                 <div class="mb-3">
@@ -63,8 +63,15 @@ else
     private async Task UpdateDiscount()
     {
         using var context = DbFactory.CreateDbContext();
-        context.Update(Discount!);
+
+        var discountToUpdate = await context.Discounts.FindAsync(Discount.DiscountId);
+
+        discountToUpdate.BookId = Discount.BookId;
+        discountToUpdate.ProcentSkidki = Discount.ProcentSkidki;
+        discountToUpdate.DataNachala = Discount.DataNachala;
+        discountToUpdate.DataKonca = Discount.DataKonca;
         await context.SaveChangesAsync();
+
         NavigationManager.NavigateTo("/discounts");
     }
 }

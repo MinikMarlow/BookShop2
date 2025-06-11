@@ -4,13 +4,13 @@
 @inject IDbContextFactory<BookApp.Data.ApplicationDbContext> DbFactory
 @inject NavigationManager NavigationManager
 
-<PageTitle>Edit</PageTitle>
+<PageTitle>Изменить</PageTitle>
 
-<h1>Edit</h1>
+<h1>Изменить</h1>
 
-<h2>Review</h2>
+<h2>Отзыв</h2>
 <hr />
-@if (Review is null)
+@if (Review is null || Book is null)
 {
     <p><em>Loading...</em></p>
 }
@@ -20,24 +20,31 @@ else
         <div class="col-md-4">
             <EditForm method="post" Model="Review" OnValidSubmit="UpdateReview" FormName="edit" Enhance>
                 <DataAnnotationsValidator />
-                <ValidationSummary role="alert"/>
+                <ValidationSummary role="alert" />
                 <input type="hidden" name="Review.ReviewId" value="@Review.ReviewId" />
                 <div class="mb-3">
-                    <label for="bookid" class="form-label">BookId:</label>
+                    <label for="bookid" class="form-label">Id книги:</label>
                     <InputNumber id="bookid" @bind-Value="Review.BookId" class="form-control" />
                     <ValidationMessage For="() => Review.BookId" class="text-danger" />
                 </div>
+
                 <div class="mb-3">
-                    <label for="rating" class="form-label">Rating:</label>
+                    <label class="form-label">Название книги:</label>
+                    <p class="form-control-static">@Book.Title</p>
+                </div>
+
+                <div class="mb-3">
+                    <label for="rating" class="form-label">Рейтинг:</label>
                     <InputNumber id="rating" @bind-Value="Review.Rating" class="form-control" />
                     <ValidationMessage For="() => Review.Rating" class="text-danger" />
                 </div>
+
                 <div class="mb-3">
-                    <label for="text" class="form-label">Text:</label>
+                    <label for="text" class="form-label">Текст:</label>
                     <InputText id="text" @bind-Value="Review.Text" class="form-control" />
                     <ValidationMessage For="() => Review.Text" class="text-danger" />
                 </div>
-                <button type="submit" class="btn btn-primary">Save</button>
+                <button type="submit" class="btn btn-primary">Сохранить</button>
             </EditForm>
         </div>
     </div>
@@ -54,6 +61,8 @@ else
     [SupplyParameterFromForm]
     private Review? Review { get; set; }
 
+    private Book? Book { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         using var context = DbFactory.CreateDbContext();
@@ -62,6 +71,10 @@ else
         if (Review is null)
         {
             NavigationManager.NavigateTo("notfound");
+        }
+        else
+        {
+            Book = await context.Books.FirstOrDefaultAsync(b => b.BookId == Review.BookId);
         }
     }
 

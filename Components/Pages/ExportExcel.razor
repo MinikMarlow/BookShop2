@@ -1,34 +1,30 @@
 ﻿@page "/exportexcel"
-@using ClosedXML.Excel
 @using Microsoft.EntityFrameworkCore
 @using BookApp.Data
-@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@using ClosedXML.Excel
+@inject IDbContextFactory<BookApp.Data.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
 @inject IJSRuntime js
 @implements IAsyncDisposable
+@rendermode InteractiveServer
 
-<button type="button" class="btn btn-success mb-2" @onclick="ExportXLS">Экспорт всех таблиц в Excel</button>
+<h3>ExportExcel</h3>
+
+<button @onclick="ExportXLS" class="btn btn-success mb-2">Экспорт всех таблиц в Excel</button>
 
 @code {
-    ApplicationDbContext context = default!;
-
-    protected override void OnInitialized()
-    {
-        context = DbFactory.CreateDbContext();
-    }
-
-    public async ValueTask DisposeAsync() => await context.DisposeAsync();
-
     public async Task ExportXLS()
     {
-        var XLSStream = ExportXLSData();
+        var XLSStream = await Task.Run(() => ExportXLSData());
         await js.InvokeVoidAsync("BlazorDownloadFile", "Books.xlsx", XLSStream);
     }
 
     private byte[] ExportXLSData()
     {
+        using var context = DbFactory.CreateDbContext();
         using var workbook = new XLWorkbook();
-
         var worksheet1 = workbook.Worksheets.Add("Books");
+
         worksheet1.Cell(1, 1).Value = "BookId";
         worksheet1.Cell(1, 2).Value = "Title";
         worksheet1.Cell(1, 3).Value = "Author";
@@ -39,7 +35,7 @@
         worksheet1.Row(1).Style.Font.Bold = true;
 
         int i = 2;
-        foreach (var book in context.Books)
+        foreach (var book in context.Books.AsNoTracking()) 
         {
             worksheet1.Cell(i, 1).Value = book.BookId;
             worksheet1.Cell(i, 2).Value = book.Title;
@@ -59,7 +55,7 @@
         worksheet2.Row(1).Style.Font.Bold = true;
 
         i = 2;
-        foreach (var review in context.Reviews.Include(r => r.Book))
+        foreach (var review in context.Reviews.Include(r => r.Book).AsNoTracking())
         {
             worksheet2.Cell(i, 1).Value = review.ReviewId;
             worksheet2.Cell(i, 2).Value = review.BookId;
@@ -72,4 +68,5 @@
         workbook.SaveAs(XLSStream);
         return XLSStream.ToArray();
     }
+    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 }

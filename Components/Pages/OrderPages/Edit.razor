@@ -29,13 +29,13 @@ else
                 </div>
                 <div class="mb-3">
                     <label for="statuszakaza" class="form-label">Статус заказа:</label>
-                    <select @bind="Order.StatusZakaza" class="form-control" id="statuszakaza">
+                    <InputSelect @bind-Value="Order.StatusZakaza" class="form-control" id="statuszakaza">
                         <option value="Новый">Новый</option>
                         <option value="В обработке">В обработке</option>
                         <option value="Отправлен">Отправлен</option>
                         <option value="Доставлен">Доставлен</option>
                         <option value="Отменен">Отменен</option>
-                    </select>
+                    </InputSelect>
                     <ValidationMessage For="() => Order.StatusZakaza" class="text-danger" />
                 </div>
                 <button type="submit" class="btn btn-primary">Сохранить</button>
@@ -70,23 +70,7 @@ else
     {
         using var context = DbFactory.CreateDbContext();
         context.Attach(Order!).State = EntityState.Modified;
-
-        try
-        {
-            await context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!OrderExists(Order!.OrderId))
-            {
-                NavigationManager.NavigateTo("notfound");
-            }
-            else
-            {
-                throw;
-            }
-        }
-
+        await context.SaveChangesAsync();
         NavigationManager.NavigateTo("/orders");
     }
 

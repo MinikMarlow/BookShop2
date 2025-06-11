@@ -6,7 +6,7 @@
 
 <PageTitle>Детали</PageTitle>
 
-<h1>Детали</h1>
+<h1>Детали заказа</h1>
 
 <div>
     <h2>Заказ</h2>
@@ -20,6 +20,20 @@
         <dl class="row">
             <dt class="col-sm-2">Сумма</dt>
             <dd class="col-sm-10">@order.Summa</dd>
+            <dt class="col-sm-2">Статус</dt>
+            <dd class="col-sm-10">@order.StatusZakaza</dd>
+            <dt class="col-sm-2">Email</dt>
+            <dd class="col-sm-10">@order.UserEmail</dd>
+            <dt class="col-sm-2">Книги</dt>
+            <dd class="col-sm-10">
+                @if (order.Items != null)
+                {
+                    @foreach (var item in order.Items)
+                    {
+                        <div>@item.Book?.Title (Количество: @item.KolVo)</div>
+                    }
+                }
+            </dd>
         </dl>
         <div>
             <a href="@($"/orders/edit?orderid={order.OrderId}")">Редактировать</a> |
@@ -37,7 +51,10 @@
     protected override async Task OnInitializedAsync()
     {
         using var context = DbFactory.CreateDbContext();
-        order = await context.Orders.FirstOrDefaultAsync(m => m.OrderId == OrderId);
+        order = await context.Orders
+            .Include(o => o.Items)
+            .ThenInclude(i => i.Book)
+            .FirstOrDefaultAsync(m => m.OrderId == OrderId);
 
         if (order is null)
         {

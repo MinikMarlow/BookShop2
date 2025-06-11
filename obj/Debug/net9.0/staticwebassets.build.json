@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "I2brnbOmaKX7hCE9Tp7plyah7KTc9o/uow/bmC2n5r0=",
+  "Hash": "eAQpVdo0NsLxDuGqY6gC0iSdLLUoZFxo1NwNwKO5XMI=",
   "Source": "BookApp",
   "BasePath": "_content/BookApp",
   "Mode": "Default",
@@ -500,12 +500,12 @@
       "OriginalItemSpec": "C:\\Users\\minik\\source\\repos\\BookApp\\BookApp\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js.map"
     },
     {
-      "Identity": "C:\\Users\\minik\\source\\repos\\BookApp\\BookApp\\obj\\Debug\\net9.0\\compressed\\bskl6wa6zw-rjwb8pue63.gz",
+      "Identity": "C:\\Users\\minik\\source\\repos\\BookApp\\BookApp\\obj\\Debug\\net9.0\\compressed\\bskl6wa6zw-jm68lex57d.gz",
       "SourceId": "BookApp",
       "SourceType": "Discovered",
       "ContentRoot": "C:\\Users\\minik\\source\\repos\\BookApp\\BookApp\\obj\\Debug\\net9.0\\compressed\\",
       "BasePath": "_content/BookApp",
-      "RelativePath": "lib/openfile#[.{fingerprint=rjwb8pue63}]?.js.gz",
+      "RelativePath": "lib/openfile#[.{fingerprint=jm68lex57d}]?.js.gz",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Alternative",
@@ -514,8 +514,8 @@
       "RelatedAsset": "C:\\Users\\minik\\source\\repos\\BookApp\\BookApp\\wwwroot\\lib\\openfile.js",
       "AssetTraitName": "Content-Encoding",
       "AssetTraitValue": "gzip",
-      "Fingerprint": "ps4smmngwc",
-      "Integrity": "t5oPeLYAew6a8iKvo5GmjEGWeW/ROtv8O/zO6Xr0q5o=",
+      "Fingerprint": "8a85kmkiqz",
+      "Integrity": "MCUiTyHIOetxNp/1Zy4+lVDkww0dbsOh04/86Ajpsy0=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "C:\\Users\\minik\\source\\repos\\BookApp\\BookApp\\wwwroot\\lib\\openfile.js"
@@ -2425,8 +2425,8 @@
       "RelatedAsset": "",
       "AssetTraitName": "",
       "AssetTraitValue": "",
-      "Fingerprint": "rjwb8pue63",
-      "Integrity": "h+Uch0PW9a4zwT1GnVP99dqQl9LyTMHW4ywqEHZoTEM=",
+      "Fingerprint": "jm68lex57d",
+      "Integrity": "da+HA3U8pSHgndL69Ws7g4iimyKif7v1G6Ig4IZBVDU=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\lib\\openfile.js"
@@ -3165,7 +3165,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 05 Jun 2025 06:13:45 GMT"
+          "Value": "Fri, 06 Jun 2025 16:29:06 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -3218,7 +3218,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 05 Jun 2025 06:13:45 GMT"
+          "Value": "Fri, 06 Jun 2025 16:29:06 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -3255,7 +3255,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 05 Jun 2025 06:13:45 GMT"
+          "Value": "Fri, 06 Jun 2025 16:29:06 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -3302,7 +3302,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 05 Jun 2025 06:13:45 GMT"
+          "Value": "Fri, 06 Jun 2025 16:29:06 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -3363,7 +3363,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 05 Jun 2025 06:13:45 GMT"
+          "Value": "Fri, 06 Jun 2025 16:29:06 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -3408,7 +3408,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 05 Jun 2025 06:13:45 GMT"
+          "Value": "Fri, 06 Jun 2025 16:29:06 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -3463,7 +3463,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 05 Jun 2025 06:13:45 GMT"
+          "Value": "Fri, 06 Jun 2025 16:29:06 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -3532,7 +3532,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 05 Jun 2025 06:13:45 GMT"
+          "Value": "Fri, 06 Jun 2025 16:29:06 GMT"
         },
         {
           "Name": "Link",
@@ -3577,7 +3577,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 05 Jun 2025 06:13:45 GMT"
+          "Value": "Fri, 06 Jun 2025 16:29:06 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -3632,7 +3632,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 05 Jun 2025 06:13:45 GMT"
+          "Value": "Fri, 06 Jun 2025 16:29:06 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -3693,7 +3693,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 05 Jun 2025 06:13:45 GMT"
+          "Value": "Fri, 06 Jun 2025 16:29:06 GMT"
         },
         {
           "Name": "Link",
@@ -3730,7 +3730,7 @@
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 05 Jun 2025 06:13:45 GMT"
+          "Value": "Fri, 06 Jun 2025 16:29:06 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -18147,13 +18147,13 @@
       ]
     },
     {
-      "Route": "lib/openfile.js",
-      "AssetFile": "C:\\Users\\minik\\source\\repos\\BookApp\\BookApp\\obj\\Debug\\net9.0\\compressed\\bskl6wa6zw-rjwb8pue63.gz",
+      "Route": "lib/openfile.jm68lex57d.js",
+      "AssetFile": "C:\\Users\\minik\\source\\repos\\BookApp\\BookApp\\obj\\Debug\\net9.0\\compressed\\bskl6wa6zw-jm68lex57d.gz",
       "Selectors": [
         {
           "Name": "Content-Encoding",
           "Value": "gzip",
-          "Quality": "0.004016064257"
+          "Quality": "0.003906250000"
         }
       ],
       "ResponseHeaders": [
@@ -18163,19 +18163,19 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "248"
+          "Value": "255"
         },
         {
           "Name": "ETag",
-          "Value": "\"t5oPeLYAew6a8iKvo5GmjEGWeW/ROtv8O/zO6Xr0q5o=\""
+          "Value": "\"MCUiTyHIOetxNp/1Zy4+lVDkww0dbsOh04/86Ajpsy0=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 05 Jun 2025 07:17:12 GMT"
+          "Value": "Fri, 06 Jun 2025 17:19:57 GMT"
         },
         {
           "Name": "Cache-Control",
-          "Value": "no-cache"
+          "Value": "max-age=31536000, immutable"
         },
         {
           "Name": "Content-Encoding",
@@ -18191,18 +18191,26 @@
         },
         {
           "Name": "ETag",
-          "Value": "W/\"h+Uch0PW9a4zwT1GnVP99dqQl9LyTMHW4ywqEHZoTEM=\""
+          "Value": "W/\"da+HA3U8pSHgndL69Ws7g4iimyKif7v1G6Ig4IZBVDU=\""
         }
       ],
       "EndpointProperties": [
         {
+          "Name": "fingerprint",
+          "Value": "jm68lex57d"
+        },
+        {
+          "Name": "label",
+          "Value": "lib/openfile.js"
+        },
+        {
           "Name": "integrity",
-          "Value": "sha256-h+Uch0PW9a4zwT1GnVP99dqQl9LyTMHW4ywqEHZoTEM="
+          "Value": "sha256-da+HA3U8pSHgndL69Ws7g4iimyKif7v1G6Ig4IZBVDU="
         }
       ]
     },
     {
-      "Route": "lib/openfile.js",
+      "Route": "lib/openfile.jm68lex57d.js",
       "AssetFile": "C:\\Users\\minik\\source\\repos\\BookApp\\BookApp\\wwwroot\\lib\\openfile.js",
       "Selectors": [],
       "ResponseHeaders": [
@@ -18212,7 +18220,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "385"
+          "Value": "373"
         },
         {
           "Name": "Content-Type",
@@ -18220,121 +18228,21 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"h+Uch0PW9a4zwT1GnVP99dqQl9LyTMHW4ywqEHZoTEM=\""
+          "Value": "\"da+HA3U8pSHgndL69Ws7g4iimyKif7v1G6Ig4IZBVDU=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 05 Jun 2025 07:17:12 GMT"
-        },
-        {
-          "Name": "Cache-Control",
-          "Value": "no-cache"
-        }
-      ],
-      "EndpointProperties": [
-        {
-          "Name": "integrity",
-          "Value": "sha256-h+Uch0PW9a4zwT1GnVP99dqQl9LyTMHW4ywqEHZoTEM="
-        }
-      ]
-    },
-    {
-      "Route": "lib/openfile.js.gz",
-      "AssetFile": "C:\\Users\\minik\\source\\repos\\BookApp\\BookApp\\obj\\Debug\\net9.0\\compressed\\bskl6wa6zw-rjwb8pue63.gz",
-      "Selectors": [],
-      "ResponseHeaders": [
-        {
-          "Name": "Accept-Ranges",
-          "Value": "bytes"
-        },
-        {
-          "Name": "Content-Length",
-          "Value": "248"
-        },
-        {
-          "Name": "Content-Type",
-          "Value": "text/javascript"
-        },
-        {
-          "Name": "ETag",
-          "Value": "\"t5oPeLYAew6a8iKvo5GmjEGWeW/ROtv8O/zO6Xr0q5o=\""
-        },
-        {
-          "Name": "Last-Modified",
-          "Value": "Thu, 05 Jun 2025 07:17:12 GMT"
-        },
-        {
-          "Name": "Cache-Control",
-          "Value": "no-cache"
-        },
-        {
-          "Name": "Content-Encoding",
-          "Value": "gzip"
-        },
-        {
-          "Name": "Vary",
-          "Value": "Content-Encoding"
-        }
-      ],
-      "EndpointProperties": [
-        {
-          "Name": "integrity",
-          "Value": "sha256-t5oPeLYAew6a8iKvo5GmjEGWeW/ROtv8O/zO6Xr0q5o="
-        }
-      ]
-    },
-    {
-      "Route": "lib/openfile.rjwb8pue63.js",
-      "AssetFile": "C:\\Users\\minik\\source\\repos\\BookApp\\BookApp\\obj\\Debug\\net9.0\\compressed\\bskl6wa6zw-rjwb8pue63.gz",
-      "Selectors": [
-        {
-          "Name": "Content-Encoding",
-          "Value": "gzip",
-          "Quality": "0.004016064257"
-        }
-      ],
-      "ResponseHeaders": [
-        {
-          "Name": "Accept-Ranges",
-          "Value": "bytes"
-        },
-        {
-          "Name": "Content-Length",
-          "Value": "248"
-        },
-        {
-          "Name": "ETag",
-          "Value": "\"t5oPeLYAew6a8iKvo5GmjEGWeW/ROtv8O/zO6Xr0q5o=\""
-        },
-        {
-          "Name": "Last-Modified",
-          "Value": "Thu, 05 Jun 2025 07:17:12 GMT"
+          "Value": "Fri, 06 Jun 2025 17:19:57 GMT"
         },
         {
           "Name": "Cache-Control",
           "Value": "max-age=31536000, immutable"
-        },
-        {
-          "Name": "Content-Encoding",
-          "Value": "gzip"
-        },
-        {
-          "Name": "Vary",
-          "Value": "Content-Encoding"
-        },
-        {
-          "Name": "Content-Type",
-          "Value": "text/javascript"
-        },
-        {
-          "Name": "ETag",
-          "Value": "W/\"h+Uch0PW9a4zwT1GnVP99dqQl9LyTMHW4ywqEHZoTEM=\""
         }
       ],
       "EndpointProperties": [
         {
           "Name": "fingerprint",
-          "Value": "rjwb8pue63"
+          "Value": "jm68lex57d"
         },
         {
           "Name": "label",
@@ -18342,13 +18250,13 @@
         },
         {
           "Name": "integrity",
-          "Value": "sha256-h+Uch0PW9a4zwT1GnVP99dqQl9LyTMHW4ywqEHZoTEM="
+          "Value": "sha256-da+HA3U8pSHgndL69Ws7g4iimyKif7v1G6Ig4IZBVDU="
         }
       ]
     },
     {
-      "Route": "lib/openfile.rjwb8pue63.js",
-      "AssetFile": "C:\\Users\\minik\\source\\repos\\BookApp\\BookApp\\wwwroot\\lib\\openfile.js",
+      "Route": "lib/openfile.jm68lex57d.js.gz",
+      "AssetFile": "C:\\Users\\minik\\source\\repos\\BookApp\\BookApp\\obj\\Debug\\net9.0\\compressed\\bskl6wa6zw-jm68lex57d.gz",
       "Selectors": [],
       "ResponseHeaders": [
         {
@@ -18357,7 +18265,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "385"
+          "Value": "255"
         },
         {
           "Name": "Content-Type",
@@ -18365,56 +18273,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"h+Uch0PW9a4zwT1GnVP99dqQl9LyTMHW4ywqEHZoTEM=\""
+          "Value": "\"MCUiTyHIOetxNp/1Zy4+lVDkww0dbsOh04/86Ajpsy0=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Thu, 05 Jun 2025 07:17:12 GMT"
-        },
-        {
-          "Name": "Cache-Control",
-          "Value": "max-age=31536000, immutable"
-        }
-      ],
-      "EndpointProperties": [
-        {
-          "Name": "fingerprint",
-          "Value": "rjwb8pue63"
-        },
-        {
-          "Name": "label",
-          "Value": "lib/openfile.js"
-        },
-        {
-          "Name": "integrity",
-          "Value": "sha256-h+Uch0PW9a4zwT1GnVP99dqQl9LyTMHW4ywqEHZoTEM="
-        }
-      ]
-    },
-    {
-      "Route": "lib/openfile.rjwb8pue63.js.gz",
-      "AssetFile": "C:\\Users\\minik\\source\\repos\\BookApp\\BookApp\\obj\\Debug\\net9.0\\compressed\\bskl6wa6zw-rjwb8pue63.gz",
-      "Selectors": [],
-      "ResponseHeaders": [
-        {
-          "Name": "Accept-Ranges",
-          "Value": "bytes"
-        },
-        {
-          "Name": "Content-Length",
-          "Value": "248"
-        },
-        {
-          "Name": "Content-Type",
-          "Value": "text/javascript"
-        },
-        {
-          "Name": "ETag",
-          "Value": "\"t5oPeLYAew6a8iKvo5GmjEGWeW/ROtv8O/zO6Xr0q5o=\""
-        },
-        {
-          "Name": "Last-Modified",
-          "Value": "Thu, 05 Jun 2025 07:17:12 GMT"
+          "Value": "Fri, 06 Jun 2025 17:19:57 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -18432,7 +18295,7 @@
       "EndpointProperties": [
         {
           "Name": "fingerprint",
-          "Value": "rjwb8pue63"
+          "Value": "jm68lex57d"
         },
         {
           "Name": "label",
@@ -18440,7 +18303,144 @@
         },
         {
           "Name": "integrity",
-          "Value": "sha256-t5oPeLYAew6a8iKvo5GmjEGWeW/ROtv8O/zO6Xr0q5o="
+          "Value": "sha256-MCUiTyHIOetxNp/1Zy4+lVDkww0dbsOh04/86Ajpsy0="
+        }
+      ]
+    },
+    {
+      "Route": "lib/openfile.js",
+      "AssetFile": "C:\\Users\\minik\\source\\repos\\BookApp\\BookApp\\obj\\Debug\\net9.0\\compressed\\bskl6wa6zw-jm68lex57d.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.003906250000"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "255"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"MCUiTyHIOetxNp/1Zy4+lVDkww0dbsOh04/86Ajpsy0=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 06 Jun 2025 17:19:57 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"da+HA3U8pSHgndL69Ws7g4iimyKif7v1G6Ig4IZBVDU=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-da+HA3U8pSHgndL69Ws7g4iimyKif7v1G6Ig4IZBVDU="
+        }
+      ]
+    },
+    {
+      "Route": "lib/openfile.js",
+      "AssetFile": "C:\\Users\\minik\\source\\repos\\BookApp\\BookApp\\wwwroot\\lib\\openfile.js",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "373"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"da+HA3U8pSHgndL69Ws7g4iimyKif7v1G6Ig4IZBVDU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 06 Jun 2025 17:19:57 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-da+HA3U8pSHgndL69Ws7g4iimyKif7v1G6Ig4IZBVDU="
+        }
+      ]
+    },
+    {
+      "Route": "lib/openfile.js.gz",
+      "AssetFile": "C:\\Users\\minik\\source\\repos\\BookApp\\BookApp\\obj\\Debug\\net9.0\\compressed\\bskl6wa6zw-jm68lex57d.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "255"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/javascript"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"MCUiTyHIOetxNp/1Zy4+lVDkww0dbsOh04/86Ajpsy0=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 06 Jun 2025 17:19:57 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-MCUiTyHIOetxNp/1Zy4+lVDkww0dbsOh04/86Ajpsy0="
         }
       ]
     }

@@ -9,10 +9,10 @@
 <h1>Создание заказа</h1>
 <hr />
 <div class="row">
-    <div class="col-md-4 order-form">
+    <div class="col-md-4">
         <EditForm method="post" Model="Order" OnValidSubmit="CreateOrder" FormName="createOrder" Enhance>
             <DataAnnotationsValidator />
-            <ValidationSummary class="validation-summary text-danger" role="alert" />
+            <ValidationSummary class="text-danger" role="alert" />
 
             <div class="mb-3">
                 <label for="userEmail" class="form-label">Email пользователя:</label>
@@ -48,20 +48,22 @@
 
             <div class="mb-3">
                 <label for="bookSelect" class="form-label">Книга:</label>
-                <select id="bookSelect" @bind="selectedBookId" class="form-select">
+                <InputSelect id="bookSelect" @bind-Value="selectedBookId" class="form-select">
                     @foreach (var book in books)
                     {
-                        <option value="@book.BookId">@book.Title (@book.Price.ToString("C"))</option>
+                        <option value="@book.BookId">@book.Title</option>
                     }
-                </select>
+                </InputSelect>
+                <ValidationMessage For="() => selectedBookId" class="text-danger" />
             </div>
 
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Создать заказ</button>
-                <a href="/orders" class="btn-link">Назад к списку</a>
-            </div>
+            <button type="submit" class="btn btn-primary">Создать заказ</button>
         </EditForm>
     </div>
+</div>
+
+<div>
+    <a href="/orders">Назад к списку</a>
 </div>
 
 <style>
@@ -194,23 +196,33 @@
     {
         using var context = DbFactory.CreateDbContext();
         books = await context.Books.ToListAsync();
-        selectedBookId = books.FirstOrDefault()?.BookId ?? 0;
+        if (books.Any())
+        {
+            selectedBookId = books.First().BookId;
+        }
     }
 
     private async Task CreateOrder()
     {
         using var context = DbFactory.CreateDbContext();
+        var selectedBook = await context.Books.FindAsync(selectedBookId);
+        if (selectedBook == null) return;
 
         var order = new Order
             {
                 UserEmail = Order.UserEmail,
                 PaymentMethod = Order.PaymentMethod,
                 Address = Order.Address,
-                Summa = books.First(b => b.BookId == selectedBookId).Price,
+                Summa = selectedBook.Price,
                 StatusZakaza = "Новый",
                 Items = new List<OrderItem>
             {
-                new() { BookId = selectedBookId, KolVo = 1 }
+                new OrderItem
+                {
+                    BookId = selectedBookId,
+                    KolVo = 1,
+                    CenaZaEdinicy = selectedBook.Price
+                }
             }
             };
 

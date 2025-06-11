@@ -1,11 +1,12 @@
 ﻿function BlazorDownloadFile(filename, content) {
-    const blob = new Blob([content], { type: "application/octet-stream" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+	const file =new File([content],filename, { type:
+"application/octet-stream" });
+	const exportUrl = URL.createObjectURL(file);
+	const a = document.createElement("a");
+	document.body.appendChild(a);
+	a.href = exportUrl;
+	a.download = filename;
+	a.target = "_self";
+	a.click();
+	URL.revokeObjectURL(exportUrl);
 }
