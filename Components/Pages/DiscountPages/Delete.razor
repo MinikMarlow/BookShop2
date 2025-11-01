@@ -1,9 +1,7 @@
 ﻿@page "/discounts/delete"
 @attribute [Authorize(Roles = "Administrator")]
-@using Microsoft.EntityFrameworkCore
-@using BookApp.Data
-@inject IDbContextFactory<BookApp.Data.ApplicationDbContext> DbFactory
 @inject NavigationManager NavigationManager
+@inject DiscountService DiscountService
 
 <PageTitle>Delete</PageTitle>
 
@@ -24,15 +22,15 @@
         </dl>
         <dl class="row">
             <dt class="col-sm-2">ProcentSkidki</dt>
-            <dd class="col-sm-10">@discount.ProcentSkidki</dd>
+            <dd class="col-sm-10">@discount.DiscountRate</dd>
         </dl>
         <dl class="row">
             <dt class="col-sm-2">DataNachala</dt>
-            <dd class="col-sm-10">@discount.DataNachala</dd>
+            <dd class="col-sm-10">@discount.StartDate</dd>
         </dl>
         <dl class="row">
             <dt class="col-sm-2">DataKonca</dt>
-            <dd class="col-sm-10">@discount.DataKonca</dd>
+            <dd class="col-sm-10">@discount.EndDate</dd>
         </dl>
         <EditForm method="post" Model="discount" OnValidSubmit="DeleteDiscount" FormName="delete" Enhance>
             <button type="submit" class="btn btn-danger" disabled="@(discount is null)">Delete</button> |
@@ -49,20 +47,15 @@
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        discount = await context.Discounts.FirstOrDefaultAsync(m => m.DiscountId == DiscountId);
+        discount = await DiscountService.FindByIdAsync(DiscountId);
 
         if (discount is null)
-        {
             NavigationManager.NavigateTo("notfound");
-        }
     }
 
     private async Task DeleteDiscount()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.Discounts.Remove(discount!);
-        await context.SaveChangesAsync();
+        await DiscountService.DeleteAsync(discount);
         NavigationManager.NavigateTo("/discounts");
     }
 }

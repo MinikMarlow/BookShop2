@@ -2,27 +2,26 @@
 
 #nullable disable
 
-namespace BookApp.Migrations
-{
-    /// <inheritdoc />
-    public partial class AddUserEmailToOrder : Migration
-    {
-        /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.AddColumn<string>(
-                name: "UserEmail",
-                table: "Orders",
-                type: "nvarchar(max)",
-                nullable: true);
-        }
+namespace BookApp.Migrations;
 
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropColumn(
-                name: "UserEmail",
-                table: "Orders");
-        }
-    }
+/// <inheritdoc />
+public partial class AddUserEmailToOrder : Migration
+{
+	/// <inheritdoc />
+	protected override void Up(MigrationBuilder migrationBuilder)
+	{
+		migrationBuilder.AddColumn<string>(
+			name: "UserEmail",
+			table: "Orders",
+			type: "nvarchar(max)",
+			nullable: true);
+	}
+
+	/// <inheritdoc />
+	protected override void Down(MigrationBuilder migrationBuilder)
+	{
+		migrationBuilder.DropColumn(
+			name: "UserEmail",
+			table: "Orders");
+	}
 }

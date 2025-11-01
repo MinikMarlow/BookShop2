@@ -1,9 +1,7 @@
 ﻿@page "/orders/delete"
 @attribute [Authorize(Roles = "Administrator")]
-@using Microsoft.EntityFrameworkCore
-@using BookApp.Data
-@inject IDbContextFactory<BookApp.Data.ApplicationDbContext> DbFactory
 @inject NavigationManager NavigationManager
+@inject OrderService OrderService
 
 <PageTitle>Удалить заказ</PageTitle>
 
@@ -23,11 +21,11 @@
         </dl>
         <dl class="row">
             <dt class="col-sm-2">Сумма</dt>
-            <dd class="col-sm-10">@order.Summa.ToString("C")</dd>
+            <dd class="col-sm-10">@order.Amount.ToString("C")</dd>
         </dl>
         <dl class="row">
             <dt class="col-sm-2">Статус</dt>
-            <dd class="col-sm-10">@order.StatusZakaza</dd>
+            <dd class="col-sm-10">@order.Status</dd>
         </dl>
         <dl class="row">
             <dt class="col-sm-2">Email</dt>
@@ -41,7 +39,7 @@
             {
                 <dl class="row">
                     <dt class="col-sm-2">@item.Book?.Title</dt>
-                    <dd class="col-sm-10">@item.KolVo шт. по @item.CenaZaEdinicy.ToString("C")</dd>
+                    <dd class="col-sm-10">@item.Count шт. по @item.ItemPrice.ToString("C")</dd>
                 </dl>
             }
         }
@@ -61,31 +59,15 @@
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        order = await context.Orders
-            .Include(o => o.Items)
-            .ThenInclude(i => i.Book)
-            .FirstOrDefaultAsync(m => m.OrderId == OrderId);
+        order = await OrderService.FindByIdAsync(OrderId);
 
         if (order is null)
-        {
             NavigationManager.NavigateTo("notfound");
-        }
     }
 
     private async Task DeleteOrder()
     {
-        using var context = DbFactory.CreateDbContext();
-        var orderToDelete = await context.Orders
-            .Include(o => o.Items)
-            .FirstOrDefaultAsync(o => o.OrderId == OrderId);
-
-        if (orderToDelete != null)
-        {
-            context.Orders.Remove(orderToDelete);
-            await context.SaveChangesAsync();
-        }
-
+        await OrderService.DeleteAsync(order!);
         NavigationManager.NavigateTo("/orders");
     }
 }

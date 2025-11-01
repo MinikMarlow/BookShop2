@@ -1,8 +1,6 @@
 ﻿@page "/reviews/edit"
-@using Microsoft.EntityFrameworkCore
-@using BookApp.Data
-@inject IDbContextFactory<BookApp.Data.ApplicationDbContext> DbFactory
 @inject NavigationManager NavigationManager
+@inject ReviewService ReviewService
 
 <PageTitle>Изменить</PageTitle>
 
@@ -65,48 +63,21 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        Review ??= await context.Reviews.FirstOrDefaultAsync(m => m.ReviewId == ReviewId);
+        var review = await ReviewService.FindByIdAsync(ReviewId);
+        Review ??= review;
 
         if (Review is null)
         {
             NavigationManager.NavigateTo("notfound");
+            return;
         }
-        else
-        {
-            Book = await context.Books.FirstOrDefaultAsync(b => b.BookId == Review.BookId);
-        }
+
+        Book = review?.Book;
     }
 
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task UpdateReview()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.Attach(Review!).State = EntityState.Modified;
-
-        try
-        {
-            await context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!ReviewExists(Review!.ReviewId))
-            {
-                NavigationManager.NavigateTo("notfound");
-            }
-            else
-            {
-                throw;
-            }
-        }
-
+        await ReviewService.UpdateAsync(Review);
         NavigationManager.NavigateTo("/reviews");
-    }
-
-    private bool ReviewExists(int reviewid)
-    {
-        using var context = DbFactory.CreateDbContext();
-        return context.Reviews.Any(e => e.ReviewId == reviewid);
     }
 }

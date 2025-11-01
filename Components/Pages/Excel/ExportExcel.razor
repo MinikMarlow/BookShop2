@@ -1,9 +1,7 @@
 ﻿@page "/exportexcel"
-@using Microsoft.EntityFrameworkCore
-@using BookApp.Data
-@using ClosedXML.Excel
-@inject IDbContextFactory<BookApp.Data.ApplicationDbContext> DbFactory
 @inject NavigationManager NavigationManager
+@inject BookService BookService
+@inject ReviewService ReviewService
 @inject IJSRuntime js
 @implements IAsyncDisposable
 @rendermode InteractiveServer
@@ -15,13 +13,16 @@
 @code {
     public async Task ExportXLS()
     {
-        var XLSStream = await Task.Run(() => ExportXLSData());
+        var books = await BookService.GetAllAsync();
+        var reviews = await ReviewService.GetAllAsync();
+
+        var XLSStream = await Task.Run(() => ExportXLSData(books, reviews));
         await js.InvokeVoidAsync("BlazorDownloadFile", "Books.xlsx", XLSStream);
     }
 
-    private byte[] ExportXLSData()
+    private byte[] ExportXLSData(List<Book> books, List<Review> reviews)
     {
-        using var context = DbFactory.CreateDbContext();
+
         using var workbook = new XLWorkbook();
         var worksheet1 = workbook.Worksheets.Add("Books");
 
@@ -35,15 +36,15 @@
         worksheet1.Row(1).Style.Font.Bold = true;
 
         int i = 2;
-        foreach (var book in context.Books.AsNoTracking()) 
+        foreach (var book in books) 
         {
             worksheet1.Cell(i, 1).Value = book.BookId;
             worksheet1.Cell(i, 2).Value = book.Title;
             worksheet1.Cell(i, 3).Value = book.Author;
-            worksheet1.Cell(i, 4).Value = book.Zhanr;
-            worksheet1.Cell(i, 5).Value = book.Opisanie;
+            worksheet1.Cell(i, 4).Value = book.Genre;
+            worksheet1.Cell(i, 5).Value = book.Description;
             worksheet1.Cell(i, 6).Value = book.Price;
-            worksheet1.Cell(i, 7).Value = book.KolVoNaSklade;
+            worksheet1.Cell(i, 7).Value = book.AvailableCount;
             i++;
         }
 
@@ -55,7 +56,7 @@
         worksheet2.Row(1).Style.Font.Bold = true;
 
         i = 2;
-        foreach (var review in context.Reviews.Include(r => r.Book).AsNoTracking())
+        foreach (var review in reviews)
         {
             worksheet2.Cell(i, 1).Value = review.ReviewId;
             worksheet2.Cell(i, 2).Value = review.BookId;

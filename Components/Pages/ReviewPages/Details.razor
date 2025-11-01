@@ -1,8 +1,6 @@
 ﻿@page "/reviews/details"
-@using Microsoft.EntityFrameworkCore
-@using BookApp.Data
-@inject IDbContextFactory<BookApp.Data.ApplicationDbContext> DbFactory
 @inject NavigationManager NavigationManager
+@inject ReviewService ReviewService
 
 <PageTitle>Просмотр отзыва</PageTitle>
 
@@ -45,18 +43,14 @@
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        review = await context.Reviews
-            .Include(r => r.Book)
-            .FirstOrDefaultAsync(m => m.ReviewId == ReviewId);
+        review = await ReviewService.FindByIdAsync(ReviewId);
 
         if (review is null)
         {
             NavigationManager.NavigateTo("notfound");
+            return;
         }
-        else if (review.Book != null)
-        {
-            bookTitle = review.Book.Title;
-        }
+        
+        bookTitle = review.Book?.Title ?? string.Empty;
     }
 }

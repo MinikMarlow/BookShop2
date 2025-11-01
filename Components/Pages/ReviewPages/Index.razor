@@ -1,10 +1,6 @@
 ﻿@page "/reviews"
-@using BookApp.Data
-@using Microsoft.EntityFrameworkCore
-@using Microsoft.AspNetCore.Components.QuickGrid
-@implements IAsyncDisposable
-@inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager NavigationManager
+@inject ReviewService ReviewService
 
 <PageTitle>Отзывы</PageTitle>
 
@@ -148,26 +144,28 @@
 </style>
 
 @code {
-    private ApplicationDbContext context = default!;
     private string searchTerm = string.Empty;
     [Parameter]
     [SupplyParameterFromQuery]
     public int? BookId { get; set; }
 
-    private IQueryable<Review> allReviews = Enumerable.Empty<Review>().AsQueryable();
+    private IQueryable<Review> reviews = Enumerable.Empty<Review>().AsQueryable();
 
     protected override void OnInitialized()
     {
-        context = DbFactory.CreateDbContext();
-        allReviews = context.Reviews.Include(r => r.Book).AsQueryable();
+        reviews = ReviewService.Reviews;
     }
 
-    private IQueryable<Review> FilteredReviews =>
-        string.IsNullOrWhiteSpace(searchTerm)
-            ? allReviews
-            : allReviews.Where(r =>
-                r.Book.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                r.Text.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+    private IQueryable<Review> FilteredReviews
+    {
+        get
+        {
+            if (string.IsNullOrWhiteSpace(searchTerm))
+                return reviews;
 
-    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+            return reviews.Where(r =>
+                   r.Book.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                   r.Text.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+        }
+    }
 }

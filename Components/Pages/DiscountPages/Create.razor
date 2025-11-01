@@ -1,10 +1,8 @@
 ﻿@page "/discounts/create"
 @attribute [Authorize(Roles = "Administrator")]
-@using Microsoft.AspNetCore.Authorization
-@using Microsoft.EntityFrameworkCore
-@using BookApp.Data
-@inject IDbContextFactory<BookApp.Data.ApplicationDbContext> DbFactory
 @inject NavigationManager NavigationManager
+@inject BookService BookService
+@inject DiscountService DiscountService
 
 <PageTitle>Создать скидку</PageTitle>
 
@@ -30,20 +28,20 @@
 
             <div class="mb-3">
                 <label for="percent" class="form-label">Процент скидки:</label>
-                <InputNumber id="percent" @bind-Value="Discount.ProcentSkidki" class="form-control" />
-                <ValidationMessage For="() => Discount.ProcentSkidki" class="text-danger" />
+                <InputNumber id="percent" @bind-Value="Discount.DiscountRate" class="form-control" />
+                <ValidationMessage For="() => Discount.DiscountRate" class="text-danger" />
             </div>
 
             <div class="mb-3">
                 <label for="startDate" class="form-label">Дата начала:</label>
-                <InputDate id="startDate" @bind-Value="Discount.DataNachala" class="form-control" />
-                <ValidationMessage For="() => Discount.DataNachala" class="text-danger" />
+                <InputDate id="startDate" @bind-Value="Discount.StartDate" class="form-control" />
+                <ValidationMessage For="() => Discount.StartDate" class="text-danger" />
             </div>
 
             <div class="mb-3">
                 <label for="endDate" class="form-label">Дата окончания:</label>
-                <InputDate id="endDate" @bind-Value="Discount.DataKonca" class="form-control" />
-                <ValidationMessage For="() => Discount.DataKonca" class="text-danger" />
+                <InputDate id="endDate" @bind-Value="Discount.EndDate" class="form-control" />
+                <ValidationMessage For="() => Discount.EndDate" class="text-danger" />
             </div>
 
             <button type="submit" class="btn btn-primary">Создать скидку</button>
@@ -61,21 +59,18 @@
     [SupplyParameterFromForm]
     private Discount Discount { get; set; } = new()
         {
-            DataNachala = DateTime.Today,
-            DataKonca = DateTime.Today.AddDays(7)
+            StartDate = DateTime.Today,
+            EndDate = DateTime.Today.AddDays(7)
         };
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        Books = await context.Books.ToListAsync();
+        Books = await BookService.GetAllAsync();
     }
 
     private async Task AddDiscount()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.Discounts.Add(Discount);
-        await context.SaveChangesAsync();
+        await DiscountService.AddAsync(Discount);
         NavigationManager.NavigateTo("/discounts");
     }
 }

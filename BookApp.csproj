@@ -4,7 +4,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>aspnet-BookApp-257b1106-755a-4841-9c98-f4f74f0b0c87</UserSecretsId>
+    <UserSecretsId>BookApp</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

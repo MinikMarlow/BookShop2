@@ -118,16 +118,19 @@ namespace BookApp.Migrations
                     b.Property<string>("Author")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("AvailableCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Genre")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<byte[]>("ImageData")
                         .HasColumnType("varbinary(max)");
 
                     b.Property<string>("ImageFileName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("KolVoNaSklade")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Opisanie")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")
@@ -135,9 +138,6 @@ namespace BookApp.Migrations
                         .HasColumnType("decimal(10,2)");
 
                     b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Zhanr")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("BookId");
@@ -153,10 +153,10 @@ namespace BookApp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartItemId"));
 
-                    b.Property<int>("BookId")
+                    b.Property<int>("Amount")
                         .HasColumnType("int");
 
-                    b.Property<int>("Kolichestvo")
+                    b.Property<int>("BookId")
                         .HasColumnType("int");
 
                     b.HasKey("CartItemId");
@@ -193,15 +193,15 @@ namespace BookApp.Migrations
                     b.Property<int>("BookId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("DataKonca")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DataNachala")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("ProcentSkidki")
+                    b.Property<decimal>("DiscountRate")
                         .HasPrecision(5, 2)
                         .HasColumnType("decimal(5,2)");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("DiscountId");
 
@@ -221,15 +221,15 @@ namespace BookApp.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
+
                     b.Property<string>("PaymentMethod")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("StatusZakaza")
+                    b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Summa")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("decimal(10,2)");
 
                     b.Property<string>("UserEmail")
                         .HasColumnType("nvarchar(max)");
@@ -250,12 +250,12 @@ namespace BookApp.Migrations
                     b.Property<int>("BookId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("CenaZaEdinicy")
+                    b.Property<int>("Count")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("ItemPrice")
                         .HasPrecision(10, 2)
                         .HasColumnType("decimal(10,2)");
-
-                    b.Property<int>("KolVo")
-                        .HasColumnType("int");
 
                     b.Property<int?>("OrderId")
                         .HasColumnType("int");

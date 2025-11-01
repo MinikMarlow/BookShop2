@@ -1,12 +1,9 @@
 ﻿@page "/books/create"
 @attribute [Authorize(Roles="Administrator")]
-@using Microsoft.AspNetCore.Authorization
-@using Microsoft.EntityFrameworkCore
-@using BookApp.Data
-@using System.IO
-@inject IDbContextFactory<BookApp.Data.ApplicationDbContext> DbFactory
 @inject NavigationManager NavigationManager
 @inject IWebHostEnvironment Environment
+@inject BookService BookService
+@rendermode InteractiveServer
 
 <PageTitle>Создать книгу</PageTitle>
 
@@ -32,14 +29,14 @@
 
             <div class="mb-3">
                 <label for="zhanr" class="form-label">Жанр:</label>
-                <InputText id="zhanr" @bind-Value="Book.Zhanr" class="form-control" />
-                <ValidationMessage For="() => Book.Zhanr" class="text-danger" />
+                <InputText id="zhanr" @bind-Value="Book.Genre" class="form-control" />
+                <ValidationMessage For="() => Book.Genre" class="text-danger" />
             </div>
 
             <div class="mb-3">
                 <label for="opisanie" class="form-label">Описание:</label>
-                <InputTextArea id="opisanie" @bind-Value="Book.Opisanie" class="form-control" />
-                <ValidationMessage For="() => Book.Opisanie" class="text-danger" />
+                <InputTextArea id="opisanie" @bind-Value="Book.Description" class="form-control" />
+                <ValidationMessage For="() => Book.Description" class="text-danger" />
             </div>
 
             <div class="mb-3">
@@ -50,15 +47,15 @@
 
             <div class="mb-3">
                 <label for="kolvonasklade" class="form-label">Количество на складе:</label>
-                <InputNumber id="kolvonasklade" @bind-Value="Book.KolVoNaSklade" class="form-control" />
-                <ValidationMessage For="() => Book.KolVoNaSklade" class="text-danger" />
+                <InputNumber id="kolvonasklade" @bind-Value="Book.AvailableCount" class="form-control" />
+                <ValidationMessage For="() => Book.AvailableCount" class="text-danger" />
             </div>
 
             <div class="mb-3">
                 <label for="bookImage" class="form-label">Загрузите изображение:</label>
-                <InputFile id="bookImage" class="form-control"
-                           accept=".jpg,.jpeg,.png"
-                           OnChange="HandleImageFile" />
+                <InputFile OnChange="HandleImageFile"
+                           id="bookImage" class="form-control"
+                           accept=".jpg,.jpeg,.png" />
                 <ValidationMessage For="() => Book.ImageFileName" class="text-danger" />
 
                 @if (imagePreview != null)
@@ -195,12 +192,9 @@
         }
     }
 
-
     private async Task AddBook()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.Books.Add(Book);
-        await context.SaveChangesAsync();
+        await BookService.AddAsync(Book);
         NavigationManager.NavigateTo("/books");
     }
 }

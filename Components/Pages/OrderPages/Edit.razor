@@ -1,8 +1,6 @@
 ﻿@page "/orders/edit"
-@using Microsoft.EntityFrameworkCore
-@using BookApp.Data
-@inject IDbContextFactory<BookApp.Data.ApplicationDbContext> DbFactory
 @inject NavigationManager NavigationManager
+@inject OrderService OrderService
 
 <PageTitle>Редактирование</PageTitle>
 
@@ -24,19 +22,19 @@ else
                 <input type="hidden" name="Order.OrderId" value="@Order.OrderId" />
                 <div class="mb-3">
                     <label for="summa" class="form-label">Сумма:</label>
-                    <InputNumber id="summa" @bind-Value="Order.Summa" class="form-control" />
-                    <ValidationMessage For="() => Order.Summa" class="text-danger" />
+                    <InputNumber id="summa" @bind-Value="Order.Amount" class="form-control" />
+                    <ValidationMessage For="() => Order.Amount" class="text-danger" />
                 </div>
                 <div class="mb-3">
                     <label for="statuszakaza" class="form-label">Статус заказа:</label>
-                    <InputSelect @bind-Value="Order.StatusZakaza" class="form-control" id="statuszakaza">
+                    <InputSelect @bind-Value="Order.Status" class="form-control" id="statuszakaza">
                         <option value="Новый">Новый</option>
                         <option value="В обработке">В обработке</option>
                         <option value="Отправлен">Отправлен</option>
                         <option value="Доставлен">Доставлен</option>
                         <option value="Отменен">Отменен</option>
                     </InputSelect>
-                    <ValidationMessage For="() => Order.StatusZakaza" class="text-danger" />
+                    <ValidationMessage For="() => Order.Status" class="text-danger" />
                 </div>
                 <button type="submit" class="btn btn-primary">Сохранить</button>
             </EditForm>
@@ -57,8 +55,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        Order ??= await context.Orders.FirstOrDefaultAsync(m => m.OrderId == OrderId);
+        Order ??= await OrderService.FindByIdAsync(OrderId);
 
         if (Order is null)
         {
@@ -68,15 +65,7 @@ else
 
     private async Task UpdateOrder()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.Attach(Order!).State = EntityState.Modified;
-        await context.SaveChangesAsync();
+        await OrderService.UpdateAsync(Order);
         NavigationManager.NavigateTo("/orders");
-    }
-
-    private bool OrderExists(int orderid)
-    {
-        using var context = DbFactory.CreateDbContext();
-        return context.Orders.Any(e => e.OrderId == orderid);
     }
 }

@@ -1,10 +1,8 @@
 ﻿@page "/reviews/create"
 @attribute [Authorize]
-@using Microsoft.AspNetCore.Authorization
-@using Microsoft.EntityFrameworkCore
-@using BookApp.Data
-@inject IDbContextFactory<BookApp.Data.ApplicationDbContext> DbFactory
 @inject NavigationManager NavigationManager
+@inject BookService BookService
+@inject ReviewService ReviewService
 
 <PageTitle>Создать отзыв</PageTitle>
 
@@ -61,8 +59,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        Books = await context.Books.ToListAsync();
+        Books = await BookService.GetAllAsync();
 
         if (BookId.HasValue)
         {
@@ -72,9 +69,7 @@
 
     private async Task AddReview()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.Reviews.Add(Review);
-        await context.SaveChangesAsync();
+        await ReviewService.AddAsync(Review);
         NavigationManager.NavigateTo($"/reviews{(BookId.HasValue ? $"?bookid={BookId}" : "")}");
     }
 }

@@ -1,0 +1,66 @@
+﻿using BookApp.Data;
+
+using ClosedXML.Excel;
+
+using Microsoft.EntityFrameworkCore;
+
+namespace BookApp.Features.Commands.Excel;
+
+public class ExcelExportCommand(ApplicationDbContext context)
+{
+	public async Task<byte[]> HandleAsync()
+	{
+		var books = await context.Books.ToListAsync();
+		var reviews = await context.Reviews.ToListAsync();
+		return CreateExcel(books, reviews);
+	}
+
+	private static byte[] CreateExcel(List<Book> books, List<Review> reviews)
+	{
+		using var workbook = new XLWorkbook();
+		var worksheet1 = workbook.Worksheets.Add("Books");
+
+		worksheet1.Cell(1, 1).Value = "BookId";
+		worksheet1.Cell(1, 2).Value = "Title";
+		worksheet1.Cell(1, 3).Value = "Author";
+		worksheet1.Cell(1, 4).Value = "Zhanr";
+		worksheet1.Cell(1, 5).Value = "Opisanie";
+		worksheet1.Cell(1, 6).Value = "Price";
+		worksheet1.Cell(1, 7).Value = "KolVoNaSklade";
+		worksheet1.Row(1).Style.Font.Bold = true;
+
+		int i = 2;
+		foreach (var book in books)
+		{
+			worksheet1.Cell(i, 1).Value = book.BookId;
+			worksheet1.Cell(i, 2).Value = book.Title;
+			worksheet1.Cell(i, 3).Value = book.Author;
+			worksheet1.Cell(i, 4).Value = book.Genre;
+			worksheet1.Cell(i, 5).Value = book.Description;
+			worksheet1.Cell(i, 6).Value = book.Price;
+			worksheet1.Cell(i, 7).Value = book.AvailableCount;
+			i++;
+		}
+
+		var worksheet2 = workbook.Worksheets.Add("Reviews");
+		worksheet2.Cell(1, 1).Value = "ReviewId";
+		worksheet2.Cell(1, 2).Value = "BookId";
+		worksheet2.Cell(1, 3).Value = "Rating";
+		worksheet2.Cell(1, 4).Value = "Text";
+		worksheet2.Row(1).Style.Font.Bold = true;
+
+		i = 2;
+		foreach (var review in reviews)
+		{
+			worksheet2.Cell(i, 1).Value = review.ReviewId;
+			worksheet2.Cell(i, 2).Value = review.BookId;
+			worksheet2.Cell(i, 3).Value = review.Rating;
+			worksheet2.Cell(i, 4).Value = review.Text;
+			i++;
+		}
+
+		MemoryStream XLSStream = new();
+		workbook.SaveAs(XLSStream);
+		return XLSStream.ToArray();
+	}
+}

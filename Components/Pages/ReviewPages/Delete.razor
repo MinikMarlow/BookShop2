@@ -1,9 +1,7 @@
 ﻿@page "/reviews/delete"
 @attribute [Authorize(Roles = "Administrator")]
-@using Microsoft.EntityFrameworkCore
-@using BookApp.Data
-@inject IDbContextFactory<BookApp.Data.ApplicationDbContext> DbFactory
 @inject NavigationManager NavigationManager
+@inject ReviewService ReviewService
 
 <PageTitle>Удалить отзыв</PageTitle>
 
@@ -48,10 +46,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        review = await context.Reviews
-            .Include(r => r.Book)
-            .FirstOrDefaultAsync(m => m.ReviewId == ReviewId);
+        review = await ReviewService.FindByIdAsync(ReviewId);
 
         if (review is null)
         {
@@ -65,9 +60,9 @@
 
     private async Task DeleteReview()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.Reviews.Remove(review!);
-        await context.SaveChangesAsync();
+        if (review is not null)
+            await ReviewService.DeleteAsync(review);
+
         NavigationManager.NavigateTo("/reviews");
     }
 }

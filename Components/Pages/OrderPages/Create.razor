@@ -1,8 +1,7 @@
 ﻿@page "/orders/create"
-@using Microsoft.EntityFrameworkCore
-@using BookApp.Data
-@inject IDbContextFactory<ApplicationDbContext> DbFactory
 @inject NavigationManager NavigationManager
+@inject OrderService OrderService
+@inject BookService BookService
 
 <PageTitle>Создание заказа</PageTitle>
 
@@ -185,7 +184,7 @@
 </style>
 
 @code {
-    private List<string> paymentMethods = new() { "Наличные", "Карта", "Онлайн" };
+    private List<string> paymentMethods = ["Наличные", "Карта", "Онлайн"];
     private List<Book> books = new();
     private int selectedBookId;
 
@@ -194,40 +193,38 @@
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        books = await context.Books.ToListAsync();
+        books = await BookService.GetAllAsync();
         if (books.Any())
-        {
             selectedBookId = books.First().BookId;
-        }
     }
 
     private async Task CreateOrder()
     {
-        using var context = DbFactory.CreateDbContext();
-        var selectedBook = await context.Books.FindAsync(selectedBookId);
-        if (selectedBook == null) return;
+        var selectedBook = await BookService.FindByIdAsync(selectedBookId);
+        if (selectedBook is null)
+            return;
 
-        var order = new Order
-            {
-                UserEmail = Order.UserEmail,
-                PaymentMethod = Order.PaymentMethod,
-                Address = Order.Address,
-                Summa = selectedBook.Price,
-                StatusZakaza = "Новый",
-                Items = new List<OrderItem>
-            {
-                new OrderItem
-                {
-                    BookId = selectedBookId,
-                    KolVo = 1,
-                    CenaZaEdinicy = selectedBook.Price
-                }
-            }
-            };
+        var order = InitOrder(selectedBook);
 
-        context.Orders.Add(order);
-        await context.SaveChangesAsync();
+        await OrderService.AddAsync(order);
         NavigationManager.NavigateTo("/orders");
     }
+
+    private Order InitOrder(Book selectedBook) => new Order()
+    {
+        UserEmail = Order.UserEmail,
+        PaymentMethod = Order.PaymentMethod,
+        Address = Order.Address,
+        Amount = selectedBook.Price,
+        Status = "Новый",
+        Items = new List<OrderItem>
+        {
+            new OrderItem
+            {
+                BookId = selectedBookId,
+                Count = 1,
+                ItemPrice = selectedBook.Price
+            }
+        }
+    };
 }

@@ -1,0 +1,80 @@
+﻿@page "/importexcel"
+@inject NavigationManager NavigationManager
+@inject ExcelImportCommand ExcelImportCommand
+@rendermode InteractiveServer
+
+<PageTitle>Загрузка файла Excel для импорта в базу данных</PageTitle>
+
+<p>
+    <label>
+        Укажите файл Excel для импорта:
+        <InputFile OnChange="LoadFiles" />
+    </label>
+</p>
+
+@if (isLoading)
+{
+    <p>Загрузка ...</p>
+}
+else
+{
+    <ul>
+        <li>Количество импортированных книг: @bookCount</li>
+        <li>Количество импортированных отзывов: @reviewCount</li>
+        @{
+            TimeSpan ts = (EndTime).Subtract(StartTime);
+            <li>Время выполнения: @String.Format("{0}s", ts.Seconds)</li>
+        }
+    </ul>
+}
+
+@if (!string.IsNullOrEmpty(ErrorMessage))
+{
+    <div>Ошибка: @ErrorMessage</div>
+}
+
+@code {
+
+    public string ErrorMessage { get; set; } = "";
+    DateTime StartTime;
+    DateTime EndTime;
+    private bool isLoading;
+    const int MAX_FILESIZE = 5000 * 1024; // 5 MB
+    int bookCount;
+    int reviewCount;
+
+    protected override async Task OnInitializedAsync()
+    {
+        
+    }
+
+    private async Task LoadFiles(InputFileChangeEventArgs e)
+    {
+        isLoading = true;
+        var browserFile = e.File;
+
+        if (browserFile != null)
+        {
+            try
+            {
+                using (var fileStream = browserFile.OpenReadStream(MAX_FILESIZE))
+                {
+                    using var ms = new MemoryStream();
+                    await fileStream.CopyToAsync(ms);
+
+                    StartTime = DateTime.Now;
+                    var uploadResult = await ExcelImportCommand.HandleAsync(ms);
+                    EndTime = DateTime.Now;
+
+                    bookCount = uploadResult.BookCount;
+                    reviewCount = uploadResult.ReviewCount;
+                }
+            }
+            catch (Exception exception)
+            {
+                ErrorMessage = exception.Message;
+            }
+        }
+        isLoading = false;
+    }
+}

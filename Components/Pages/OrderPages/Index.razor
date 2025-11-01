@@ -1,9 +1,5 @@
 ﻿@page "/orders"
-@using Microsoft.EntityFrameworkCore
-@using Microsoft.AspNetCore.Components.QuickGrid
-@using BookApp.Data
-@implements IAsyncDisposable
-@inject IDbContextFactory<BookApp.Data.ApplicationDbContext> DbFactory
+@inject OrderService OrderService
 
 <PageTitle>Заказы</PageTitle>
 
@@ -17,15 +13,15 @@
             </AuthorizeView>
         </div>
 
-        <QuickGrid Class="orders-grid" Items="@allOrders">
+        <QuickGrid Class="orders-grid" Items="@orders">
             <PropertyColumn Title="№" Property="@(order => order.OrderId)" />
-            <PropertyColumn Title="Сумма" Property="@(order => order.Summa.ToString("C"))" Sortable="true" />
-            <PropertyColumn Title="Статус" Property="@(order => order.StatusZakaza)" Sortable="true" />
+            <PropertyColumn Title="Сумма" Property="@(order => order.Amount.ToString("C"))" Sortable="true" />
+            <PropertyColumn Title="Статус" Property="@(order => order.Status)" Sortable="true" />
             <PropertyColumn Title="Почта" Property="@(order => order.UserEmail)" Sortable="true" />
 
             <TemplateColumn Title="Книги" Context="order">
                 @{
-                    var itemsList = order.Items?.Select(item => $"{item.Book?.Title} (×{item.KolVo})") ?? Enumerable.Empty<string>();
+                    var itemsList = order.Items?.Select(item => $"{item.Book?.Title} (×{item.Count})") ?? Enumerable.Empty<string>();
                     <div>@string.Join(", ", itemsList)</div>
                 }
             </TemplateColumn>
@@ -145,23 +141,10 @@
 </style>
 
 @code {
-    private ApplicationDbContext? dbContext;
-    private IQueryable<Order>? allOrders;
+    private IQueryable<Order> orders = Enumerable.Empty<Order>().AsQueryable();
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        dbContext = await DbFactory.CreateDbContextAsync();
-        allOrders = dbContext.Orders
-            .Include(o => o.Items)
-            .ThenInclude(i => i.Book)
-            .AsQueryable();
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (dbContext is not null)
-        {
-            await dbContext.DisposeAsync();
-        }
+        orders = OrderService.Orders;
     }
 }

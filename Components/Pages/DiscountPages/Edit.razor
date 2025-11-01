@@ -1,9 +1,7 @@
 ﻿@page "/discounts/edit"
 @attribute [Authorize(Roles = "Administrator")]
-@using Microsoft.EntityFrameworkCore
-@using BookApp.Data
-@inject IDbContextFactory<BookApp.Data.ApplicationDbContext> DbFactory
 @inject NavigationManager NavigationManager
+@inject DiscountService DiscountService
 
 <PageTitle>Редактирование скидки</PageTitle>
 
@@ -27,17 +25,17 @@ else
 
                 <div class="mb-3">
                     <label class="form-label">Процент скидки:</label>
-                    <InputNumber @bind-Value="Discount.ProcentSkidki" class="form-control" />
+                    <InputNumber @bind-Value="Discount.DiscountRate" class="form-control" />
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Дата начала:</label>
-                    <InputDate @bind-Value="Discount.DataNachala" class="form-control" />
+                    <InputDate @bind-Value="Discount.StartDate" class="form-control" />
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Дата окончания:</label>
-                    <InputDate @bind-Value="Discount.DataKonca" class="form-control" />
+                    <InputDate @bind-Value="Discount.EndDate" class="form-control" />
                 </div>
 
                 <button type="submit" class="btn btn-primary">Сохранить</button>
@@ -56,22 +54,12 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        Discount = await context.Discounts.FindAsync(DiscountId);
+        Discount = await DiscountService.FindByIdAsync(DiscountId);
     }
 
     private async Task UpdateDiscount()
     {
-        using var context = DbFactory.CreateDbContext();
-
-        var discountToUpdate = await context.Discounts.FindAsync(Discount.DiscountId);
-
-        discountToUpdate.BookId = Discount.BookId;
-        discountToUpdate.ProcentSkidki = Discount.ProcentSkidki;
-        discountToUpdate.DataNachala = Discount.DataNachala;
-        discountToUpdate.DataKonca = Discount.DataKonca;
-        await context.SaveChangesAsync();
-
+        await DiscountService.UpdateAsync(Discount);
         NavigationManager.NavigateTo("/discounts");
     }
 }

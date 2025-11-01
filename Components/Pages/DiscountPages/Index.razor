@@ -1,10 +1,6 @@
 ﻿@page "/discounts"
 @attribute [Authorize(Roles = "Administrator")]
-@using Microsoft.EntityFrameworkCore
-@using Microsoft.AspNetCore.Components.QuickGrid
-@using BookApp.Data
-@implements IAsyncDisposable
-@inject IDbContextFactory<BookApp.Data.ApplicationDbContext> DbFactory
+@inject DiscountService DiscountService
 
 <PageTitle>Скидки</PageTitle>
 
@@ -16,9 +12,9 @@
             <a href="discounts/create" class="btn btn-primary">Добавить скидку</a>
         </div>
 
-        <QuickGrid Items="context.Discounts.Include(d => d.Book)" class="orders-grid">
+        <QuickGrid Items="discounts" class="orders-grid">
             <PropertyColumn Title="Книга" Property="d => d.Book!.Title" />
-            <PropertyColumn Title="Скидка" Property="d => d.SkidkaInfo" />
+            <PropertyColumn Title="Скидка" Property="d => d.DiscountView" />
 
             <TemplateColumn Title="Действия">
                 <div class="order-actions">
@@ -150,12 +146,10 @@
 </style>
 
 @code {
-    private ApplicationDbContext context = default!;
+    private IQueryable<Discount> discounts = Enumerable.Empty<Discount>().AsQueryable();
 
     protected override void OnInitialized()
     {
-        context = DbFactory.CreateDbContext();
+        discounts = DiscountService.Discounts;
     }
-
-    public async ValueTask DisposeAsync() => await context.DisposeAsync();
 }

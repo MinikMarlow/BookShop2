@@ -1,9 +1,7 @@
 ﻿@page "/"
-@using BookApp.Data
-@using BookApp.Services
-@using Microsoft.EntityFrameworkCore
 @inject NavigationManager NavigationManager
-@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject BookService BookService
+@inject DiscountService DiscountService
 
 <PageTitle>Best Books</PageTitle>
 
@@ -24,16 +22,16 @@
                     @if (!string.IsNullOrEmpty(book.ImageFileName))
                     {
                         <div class="book-image">
-                            <img src="@($"images/books/{book.ImageFileName}")" alt="@book.Title" />
+                            <img src="data:image;base64, @Convert.ToBase64String(book.ImageData)" alt="@book.Title" />
                         </div>
                     }
                     <div class="book-details">
                         <h3>@book.Title</h3>
                         <p class="author">@book.Author</p>
 
-                        @if (!string.IsNullOrEmpty(book.Opisanie))
+                        @if (!string.IsNullOrEmpty(book.Description))
                         {
-                            <div class="description">@book.Opisanie</div>
+                            <div class="description">@book.Description</div>
                         }
 
                         <div class="price-stock">
@@ -42,15 +40,15 @@
                                 var discount = GetDiscount(book);
                                 <span class="price" style="text-decoration: line-through;">@book.Price.ToString("C")</span>
                                 <span class="price" style="color:red;">
-                                    @((book.Price * (100 - discount.ProcentSkidki) / 100).ToString("C"))
-                                    (@discount.ProcentSkidki%)
+                                    @((book.Price * (100 - discount.DiscountRate) / 100).ToString("C"))
+                                    (@discount.DiscountRate%)
                                 </span>
                             }
                             else
                             {
                                 <span class="price">@book.Price.ToString("C")</span>
                             }
-                            <span class="stock">Осталось: @book.KolVoNaSklade</span>
+                            <span class="stock">Осталось: @book.AvailableCount</span>
                         </div>
                         <div class="actions">
                             <a href="@($"/orders/create?bookId={book.BookId}")"
@@ -256,16 +254,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadBooks();
-    }
-
-    private async Task LoadBooks()
-    {
-        using var context = DbFactory.CreateDbContext();
-        books = await context.Books.ToListAsync();
-        discounts = await context.Discounts
-            .Where(d => d.DataNachala <= DateTime.Today && d.DataKonca >= DateTime.Today)
-            .ToListAsync();
+        books = await BookService.GetAllAsync();
+        discounts = await DiscountService.GetActualDiscountsAsync();
     }
 
     private bool HasDiscount(Book book) =>
@@ -283,4 +273,7 @@
     {
         NavigationManager.NavigateTo($"/reviews?bookid={book.BookId}");
     }
+
+    private static string GetImage(Book book)
+        => $"data:image;base64, {Convert.ToBase64String(book.ImageData)}";
 }

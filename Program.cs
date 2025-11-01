@@ -1,16 +1,18 @@
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using BookApp.Components;
 using BookApp.Components.Account;
 using BookApp.Data;
-using BookApp.Services;
+using BookApp.Features.Commands.Excel;
+using BookApp.Features.Services;
+
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+	.AddInteractiveServerComponents();
 
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
@@ -18,15 +20,13 @@ builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 
 builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultScheme = IdentityConstants.ApplicationScheme;
-        options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-    })
-    .AddIdentityCookies();
+	{
+		options.DefaultScheme = IdentityConstants.ApplicationScheme;
+		options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+	})
+	.AddIdentityCookies();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-//builder.Services.AddDbContext<ApplicationDbContext>(options =>
-//  options.UseSqlServer(connectionString));
 
 builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
   options.UseSqlServer(connectionString));
@@ -38,13 +38,19 @@ builder.Services.AddQuickGridEntityFrameworkAdapter();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddScoped<CartService>();
+builder.Services.AddScoped<BookService>();
+builder.Services.AddScoped<DiscountService>();
+builder.Services.AddScoped<ReviewService>();
+builder.Services.AddScoped<OrderService>();
+builder.Services.AddScoped<ExcelImportCommand>();
+
 builder.Services.AddDbContextFactory<ApplicationDbContext>();
 
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
-    .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddSignInManager()
-    .AddDefaultTokenProviders();
+	.AddRoles<IdentityRole>()
+	.AddEntityFrameworkStores<ApplicationDbContext>()
+	.AddSignInManager()
+	.AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
@@ -52,23 +58,23 @@ var app = builder.Build();
 
 using (var score = app.Services.CreateAsyncScope())
 {
-    var services = score.ServiceProvider;
+	var services = score.ServiceProvider;
 
-    SeedData.Initialize(services);
+	SeedData.Initialize(services);
 }
 
-    // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment())
-    {
-        app.UseMigrationsEndPoint();
-    }
-    else
-    {
-        app.UseExceptionHandler("/Error", createScopeForErrors: true);
-        // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-        app.UseHsts();
-        app.UseMigrationsEndPoint();
-    }
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+	app.UseMigrationsEndPoint();
+}
+else
+{
+	app.UseExceptionHandler("/Error", createScopeForErrors: true);
+	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+	app.UseHsts();
+	app.UseMigrationsEndPoint();
+}
 
 app.UseStaticFiles();
 app.UseHttpsRedirection();
@@ -76,7 +82,7 @@ app.UseAntiforgery();
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+	.AddInteractiveServerRenderMode();
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
